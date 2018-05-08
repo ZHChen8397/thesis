@@ -7,7 +7,25 @@ var assert = require('assert')
 const utils = require('../../app/back/utils.js')
 // const $ = require('jquery')
 
+const Application = require('spectron').Application
+// const assert = require('assert')
+const electronPath = require('electron') // Require Electron from the binaries included in node_modules.
+const path = require('path')
+
+
 module.exports = (function() {
+    let app
+    before(function () {
+        app = new Application({
+        //   Your electron path can be any binary
+        //   i.e for OSX an example path could be '/Applications/MyApp.app/Contents/MacOS/MyApp'
+        //   But for the sake of the example we fetch it from our node_modules.
+          path: electronPath,
+    
+          args: [path.join(__dirname, '../..')]
+        })
+        return app.start()
+      })
     let programList = [{ userName: 'Play1321',
     clip: [{name:'let it go',duration:'3:30'}],
     panelName: '台北車站1號出口',
@@ -29,6 +47,9 @@ module.exports = (function() {
     let isEnter
     let isEmpty = true
     var library = English.library()
+    // let app
+
+    
     .given("the player has opened",function(){
         return new Promise(function(resolve, reject) {            
             let _emptyProgramTable = utils.getProgramTable()
@@ -98,7 +119,11 @@ module.exports = (function() {
             resolve(true)
         })
     })
-
+        after(function () {
+            if (app && app.isRunning()) {
+              return app.stop()
+            }
+          })
     return library;
 
 })();

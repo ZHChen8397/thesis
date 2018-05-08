@@ -1,0 +1,13 @@
+.DS_Store
+app/dist
+builds/*
+dist/*
+coverage
+node_modules/
+npm-debug.log
+npm-debug.log.*
+!.gitkeep
+.nyc_output/*
+scratch/
+.vscode/
+app/build/

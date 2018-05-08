@@ -1,0 +1,29 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <link rel = 'stylesheet' href='layout/player.css'/>
+        <link rel = 'stylesheet' href='../node_modules/bootstrap/dist/css/bootstrap.min.css'>
+        <!-- <script src="../node_modules/jquery/dist/jquery.min.js"></script>
+        <script src="../node_modules/bootstrap/dist/js/bootstrap.min.js"></script> -->
+        <script src ='front/player.js' ></script>
+    </head>
+    <!-- <body ondragover="dragOver(event)" ondrop="drop(event)"> -->
+    <body>   
+        <section id='playerContainer' class='player paused'>
+            <img id="logo" src="./img/oneplay_launch_view.png">
+            <!-- <div class="progress">
+                    <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuemin="0" aria-valuemax="100" style="width:80%">
+                    </div>
+                  </div> -->
+            <video muted autoplay id='videoContainer' class='video'></video>
+            <button id='close' class='close'>X</button>
+            <section id='error' class='error hide hidden'>
+                <h1 id='errorMessage'></h1>
+            </section>
+        </section>
+        <!-- <img draggable="true" ondragstart="dragStart(event)" id="qrCode"></img> -->
+        <!-- <img id="qrCode"></img> -->
+        
+    </body>
+</html>
+

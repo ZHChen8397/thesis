@@ -28,7 +28,7 @@ const app = electron.app
 const BrowserWindow = electron.BrowserWindow
 let mainWindow
 
-require('electron-debug')({ showDevTools: true })
+require('electron-debug')({ showDevTools: false })
 function createWindow () {
   mainWindow = new BrowserWindow({
     title: 'Electron Video Player',

@@ -108,10 +108,14 @@ module.exports = (function() {
 
     .then("the player should stop the program", function() {
         return new Promise(function(resolve, reject) {
-            // console.log(document.querySelector('#videoContainer'))
-            assert.equal(1,1)
-            resolve(true)
+            return app.client.getAttribute('video','class')
+                .then(result=>{ 
+                    console.log(result)
+                    resolve(true)
+                })
         });
+        
+        
     })
     .then("the player should stay stopped",function(){
         return new Promise(function(resolve,reject){
@@ -119,11 +123,11 @@ module.exports = (function() {
             resolve(true)
         })
     })
-        after(function () {
-            if (app && app.isRunning()) {
-              return app.stop()
-            }
-          })
+    after(function () {
+        if (app && app.isRunning()) {
+            return app.stop()
+        }
+    })
     return library;
 
 })();

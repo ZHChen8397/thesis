@@ -5,11 +5,8 @@ var English = Yadda.localisation.English
 var Dictionary = Yadda.Dictionary
 var assert = require('assert')
 const utils = require('../../app/back/utils.js')
-// const $ = require('jquery')
-
 const Application = require('spectron').Application
-// const assert = require('assert')
-const electronPath = require('electron') // Require Electron from the binaries included in node_modules.
+const electronPath = require('electron')
 const path = require('path')
 
 
@@ -17,11 +14,7 @@ module.exports = (function() {
     let app
     before(function () {
         app = new Application({
-        //   Your electron path can be any binary
-        //   i.e for OSX an example path could be '/Applications/MyApp.app/Contents/MacOS/MyApp'
-        //   But for the sake of the example we fetch it from our node_modules.
           path: electronPath,
-    
           args: [path.join(__dirname, '../..')]
         })
         return app.start()
@@ -30,11 +23,13 @@ module.exports = (function() {
     clip: [{name:'let it go',duration:'3:30'}],
     panelName: '台北車站1號出口',
     period: {
-      day: '星期五',
+      day: '星期四',
       startTime: '00:00',
       endTime: '23:59' 
         }}
     ]
+    let _programTable
+    let _currentProgram
     let emptyProgramTable = {
         '星期一': [],
         '星期二': [],
@@ -47,8 +42,6 @@ module.exports = (function() {
     let isEnter
     let isEmpty = true
     var library = English.library()
-    // let app
-
     
     .given("the player has opened",function(){
         return new Promise(function(resolve, reject) {            
@@ -56,14 +49,12 @@ module.exports = (function() {
             resolve(true)
         });
     })
-
     .given("User already push a program to CMS", function() {
         return new Promise(function(resolve, reject) {
             utils.initProgramTable(programList)
-            .then(()=>{
-
-            })
-            let _programTable = utils.getProgramTable()
+            .then(()=>{})
+            _programTable = utils.getProgramTable()
+            _currentProgram = utils.getCurrentProgram()
             for(var index in _programTable) { 
                 if(_programTable[index] !== '') isEmpty = false
             }
@@ -77,7 +68,6 @@ module.exports = (function() {
             }
         })
     })
-
     .given("User has no program in CMS",function(){
         return new Promise(function(resolve, reject) {
             let _emptyProgramTable = utils.getProgramTable()
@@ -87,7 +77,6 @@ module.exports = (function() {
             resolve(true)
         });
     })
-
     .when("MRT is enter the station", function() {
         return new Promise(function(resolve, reject) {
             setTimeout(function() {
@@ -95,33 +84,40 @@ module.exports = (function() {
                     scriptPath: './pyforJS'
                     };
                     var pyshell = new PythonShell('detect_in.py',options);
-              
                     pyshell.on('message', function (result) {
-                        // console.log(result)
                         isEnter = result
                         if(result) resolve(result)
                         else reject(result)
                     });
             }, 100);
+            app.webContents.send('playProgramRequest', {},0)           
         });
     })
-
     .then("the player should stop the program", function() {
         return new Promise(function(resolve, reject) {
-            return app.client.getAttribute('video','class')
+            return app.client.getAttribute('video','src')
                 .then(result=>{ 
-                    console.log(result)
+                    // console.log(`result = ${result}`)
+                    if(result !== ''){
+                        assert.fail('the program does not stop')
+                        resolve(true)
+                    }
+                    resolve(true)
+                })
+        });  
+    })
+    .then("the player should stay stopped",function(){
+        return new Promise(function(resolve, reject) {
+            return app.client.getAttribute('video','src')
+                .then(result=>{ 
+                    // console.log(`result = ${result}`)
+                    if(result !== ''){
+                        assert.fail('the program does not stop')
+                        resolve(true)
+                    }
                     resolve(true)
                 })
         });
-        
-        
-    })
-    .then("the player should stay stopped",function(){
-        return new Promise(function(resolve,reject){
-            assert.equal(1,1)
-            resolve(true)
-        })
     })
     after(function () {
         if (app && app.isRunning()) {
@@ -129,6 +125,5 @@ module.exports = (function() {
         }
     })
     return library;
-
 })();
 

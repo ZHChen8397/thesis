@@ -23,7 +23,7 @@ module.exports.setProgram = function (data, clipIndex) {
       }
       programList.push(program)
     })
-    // console.log(`[programList] ${JSON.stringify(programList, null, 2)}`)
+    console.log(`[programList] ${JSON.stringify(programList, null, 2)}`)
     $('#videoContainer').attr('src', programList[clipIndex].clipPath)
     document.getElementById('videoContainer').play()
   }

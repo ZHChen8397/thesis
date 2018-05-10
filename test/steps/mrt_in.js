@@ -78,6 +78,7 @@ module.exports = (function() {
         });
     })
     .when("MRT is enter the station", function() {
+        app.webContents.send('playProgramRequest',{},0) 
         return new Promise(function(resolve, reject) {
             setTimeout(function() {
                 var options = {
@@ -90,34 +91,25 @@ module.exports = (function() {
                         else reject(result)
                     });
             }, 100);
-            app.webContents.send('playProgramRequest', {},0)           
         });
     })
     .then("the player should stop the program", function() {
-        return new Promise(function(resolve, reject) {
-            return app.client.getAttribute('video','src')
-                .then(result=>{ 
-                    // console.log(`result = ${result}`)
-                    if(result !== ''){
-                        assert.fail('the program does not stop')
-                        resolve(true)
-                    }
-                    resolve(true)
-                })
-        });  
+        return app.client.getAttribute('video','src')
+        .then(result=>{ 
+            if(result !== ''){
+                assert.fail('the program does not stop')
+            }
+        })
+        
     })
     .then("the player should stay stopped",function(){
-        return new Promise(function(resolve, reject) {
-            return app.client.getAttribute('video','src')
-                .then(result=>{ 
-                    // console.log(`result = ${result}`)
-                    if(result !== ''){
-                        assert.fail('the program does not stop')
-                        resolve(true)
-                    }
-                    resolve(true)
-                })
-        });
+        app.webContents.send('playProgramRequest',{},0)
+        return app.client.getAttribute('video','src')
+        .then(result=>{ 
+            if(result !== ''){
+                assert.fail('the program does not stop')
+            }
+        })
     })
     after(function () {
         if (app && app.isRunning()) {

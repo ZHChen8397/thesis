@@ -103,7 +103,7 @@ module.exports = (function() {
         
     })
     .then("the player should stay stopped",function(){
-        app.webContents.send('playProgramRequest',{},0)
+        // app.webContents.send('playProgramRequest',{},0)
         return app.client.getAttribute('video','src')
         .then(result=>{ 
             if(result !== ''){

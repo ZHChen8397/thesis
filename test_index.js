@@ -72,11 +72,11 @@ Yadda.plugins.mocha.StepLevelPlugin.init();
 
 
 
-new Yadda.FeatureFileSearch('./test/features/mrtFeature').each(function(file) {
+new Yadda.FeatureFileSearch('./test/features/mrt_leaveFeature').each(function(file) {
 
     featureFile(file, function(feature) {
 
-        var library = require('./test/steps/mrt.js');
+        var library = require('./test/steps/mrt_leave.js');
         var yadda = Yadda.createInstance(library);
         // before(function () {
         //     this.app = new Application({

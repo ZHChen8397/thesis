@@ -23,65 +23,69 @@ module.exports = (function() {
         })
         return app.start()
       })
+    let programList = [{ userName: 'Play1321',
+    clip: [{name:'let it go',duration:'3:30'}],
+    panelName: '台北車站1號出口',
+    period: {
+      day: '星期四',
+      startTime: '00:00',
+      endTime: '23:59' 
+        }}
+    ]
     let _programTable
     let _currentProgram
-    // let programTable = {
-    //     "星期一": [],
-    //     "星期二": [],
-    //     "星期三": [],
-    //     "星期四": [],
-    //     "星期五": [
-    //       {
-    //         "userName": "Play1321",
-    //         "clip": [
-    //           {
-    //             "name": "tax",
-    //             "duration": 30
-    //           }
-    //         ],
-    //         "startTime": "06:00",
-    //         "endTime": "23:59"
-    //       }
-    //     ],
-    //     "星期六": [],
-    //     "星期日": []
-    //   }
+    let emptyProgramTable = {
+        '星期一': [],
+        '星期二': [],
+        '星期三': [],
+        '星期四': [],
+        '星期五': [],
+        '星期六': [],
+        '星期日': []
+    }
+    let programTable = {
+        "星期一": [],
+        "星期二": [],
+        "星期三": [],
+        "星期四": [],
+        "星期五": [
+          {
+            "userName": "Play1321",
+            "clip": [
+              {
+                "name": "tax",
+                "duration": 30
+              }
+            ],
+            "startTime": "06:00",
+            "endTime": "23:59"
+          }
+        ],
+        "星期六": [],
+        "星期日": []
+      }
+    let _emptyProgramTable
     let isEnter
     let isEmpty = true
     var library = English.library()
     
     .given("the player has opened",function(){
+        return new Promise(function(resolve, reject) {
+            _emptyProgramTable = utils.getProgramTable()
+            resolve()
+        });
+        
     })
-    .given("User already push a program to CMS", function() {
-        serverAPI.getProgramByPanelName('JEFF_MAC')
-        .then(result=>{
-            return utils.initProgramTable(result.data)
-        })
-        .then(function () {
-        return s3.getClipInfoByProgramTable(utils.getProgramTable())
-        })
-        .then(function (clipInfoList) {
-        let downloadList =utils.filterClipInfoList(clipInfoList)
-        audioHandler.createAudioTable(downloadList)
-        return downloadList
-        })
-        .then(function (downloadList) {
-        return s3.downloadClipFromS3(downloadList)
-        })
-
-        let _programTable = utils.getProgramTable()
-        for(var index in _programTable) { 
-            if(_programTable[index] !== '') isEmpty = false
-        }
-        if(isEmpty) {
-            assert.fail('programTable is empty')
-        }
-        else {
-            assert(true)
-        }
+    .given("User has no program in CMS",function(){
+        return new Promise(function(resolve, reject) {
+            let _emptyProgramTable = utils.getProgramTable()
+            for(var index in _emptyProgramTable) { 
+                if(_emptyProgramTable[index] === undefined) assert.fail('there is already a program in CMS')
+            }
+            resolve(true)
+        });
     })
     .when("MRT leave the station over 15 seconds", function() {
-        _currentProgram = utils.getCurrentProgram()
         app.webContents.send('playProgramRequest',_currentProgram,0) 
         return new Promise(function(resolve, reject) {
             setTimeout(function() {
@@ -97,15 +101,16 @@ module.exports = (function() {
             }, 100);
         });
     })
-    .then("the player should start playing program", function() {
+    .then("the player should stay stopped",function(){
+        app.webContents.reload()
+        app.webContents.send('playProgramRequest',{},0)
         return app.client.getAttribute('video','src')
         .then(result=>{ 
             // console.log(result)
-            if(result === ''){
-                assert.fail('the program does not start')
+            if(result !== ''){
+                assert.fail('the player should stay stopped')
             }
         })
-        
     })
     after(function () {
         if (app && app.isRunning()) {

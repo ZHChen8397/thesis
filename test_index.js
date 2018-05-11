@@ -75,41 +75,21 @@ Yadda.plugins.mocha.StepLevelPlugin.init();
 new Yadda.FeatureFileSearch('./test/features/mrt_leaveFeature').each(function(file) {
 
     featureFile(file, function(feature) {
-
         var library = require('./test/steps/mrt_leave.js');
-        var yadda = Yadda.createInstance(library);
-        // before(function () {
-        //     this.app = new Application({
-        //     //   Your electron path can be any binary
-        //     //   i.e for OSX an example path could be '/Applications/MyApp.app/Contents/MacOS/MyApp'
-        //     //   But for the sake of the example we fetch it from our node_modules.
-        //       path: electronPath,
-        
-        //       args: [path.join(__dirname, './')]
-        //     })
-        //     return this.app.start()
-        //   })
-        
+        var yadda = Yadda.createInstance(library);     
         scenarios(feature.scenarios, function(scenario) {
             steps(scenario.steps, function(step, done) {
                 yadda.run(step, done);
             });
         });
-        // after(function () {
-        //     if (this.app && this.app.isRunning()) {
-        //       return this.app.stop()
-        //     }
-        //   })
     });
 });
 
-new Yadda.FeatureFileSearch('./test/features/mrt_inFeature').each(function(file) {
+new Yadda.FeatureFileSearch('./test/features/mrt_leave_noProgram_Feature').each(function(file) {
 
     featureFile(file, function(feature) {
-
-        var library = require('./test/steps/mrt_in.js');
-        var yadda = Yadda.createInstance(library);
-
+        var library = require('./test/steps/mrt_leave_noProgram.js');
+        var yadda = Yadda.createInstance(library);     
         scenarios(feature.scenarios, function(scenario) {
             steps(scenario.steps, function(step, done) {
                 yadda.run(step, done);
@@ -117,5 +97,20 @@ new Yadda.FeatureFileSearch('./test/features/mrt_inFeature').each(function(file)
         });
     });
 });
+
+// new Yadda.FeatureFileSearch('./test/features/mrt_inFeature').each(function(file) {
+
+//     featureFile(file, function(feature) {
+
+//         var library = require('./test/steps/mrt_in.js');
+//         var yadda = Yadda.createInstance(library);
+
+//         scenarios(feature.scenarios, function(scenario) {
+//             steps(scenario.steps, function(step, done) {
+//                 yadda.run(step, done);
+//             });
+//         });
+//     });
+// });
 
 

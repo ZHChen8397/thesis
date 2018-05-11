@@ -1,5 +1,5 @@
 const axios = require('axios')
-const serverDomain = 'http://140.124.181.149:3000'
+const serverDomain = 'http://localhost:3000'
 module.exports.checkPanelName = function (panelIP) {
   return axios.create({timeout: 3000}).get(serverDomain + '/checkPanelName', {params: {domain: panelIP}})
 }

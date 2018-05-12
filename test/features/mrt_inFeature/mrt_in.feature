@@ -1,4 +1,3 @@
-@step=mrt_in
 Feature: MRT enter the station test
 
 Background:
@@ -10,8 +9,3 @@ Scenario: There is a program in CMS
     When MRT is enter the station
     Then the player should stop the program
 
-Scenario: There is no program in CMS
-
-    Given User has no program in CMS
-    When MRT is enter the station
-    Then the player should stay stopped

@@ -8,11 +8,9 @@ const utils = require('../../app/back/utils.js')
 const Application = require('spectron').Application
 const electronPath = require('electron')
 const path = require('path')
-const serverAPI = require('../../app/back/serverAPI.js')
-const s3 = require('../../app/back/s3.js')
 const audioHandler = require('../../app/back/audioTableHandler.js')
-// const os = require('os')
-
+const s3 = require('../../app/back/s3.js')
+const serverAPI = require('../../app/back/serverAPI.js')
 
 module.exports = (function() {
     let app
@@ -23,49 +21,13 @@ module.exports = (function() {
         })
         return app.start()
       })
-    let programList = [{ userName: 'Play1321',
-    clip: [{name:'let it go',duration:'3:30'}],
-    panelName: '台北車站1號出口',
-    period: {
-      day: '星期四',
-      startTime: '00:00',
-      endTime: '23:59' 
-        }}
-    ]
     let _programTable
     let _currentProgram
-    // let programTable = {
-    //     "星期一": [],
-    //     "星期二": [],
-    //     "星期三": [],
-    //     "星期四": [],
-    //     "星期五": [
-    //       {
-    //         "userName": "Play1321",
-    //         "clip": [
-    //           {
-    //             "name": "tax",
-    //             "duration": 30
-    //           }
-    //         ],
-    //         "startTime": "06:00",
-    //         "endTime": "23:59"
-    //       }
-    //     ],
-    //     "星期六": [],
-    //     "星期日": []
-    //   }
-    let _emptyProgramTable
     let isEnter
     let isEmpty = true
     var library = English.library()
     
     .given("the player has opened",function(){
-        return new Promise(function(resolve, reject) {
-            _emptyProgramTable = utils.getProgramTable()
-            resolve()
-        });
-        
     })
     .given("User has no program in CMS",function(){
         return new Promise(function(resolve, reject) {
@@ -76,14 +38,14 @@ module.exports = (function() {
             resolve(true)
         });
     })
-    .when("MRT leave the station over 15 seconds", function() {
-        app.webContents.send('playProgramRequest',_currentProgram,0) 
+    .when("MRT is enter the station", function() {
+        app.webContents.send('playProgramRequest',{},0) 
         return new Promise(function(resolve, reject) {
             setTimeout(function() {
                 var options = {
                     scriptPath: './pyforJS'
                     };
-                    var pyshell = new PythonShell('detect_leave.py',options);
+                    var pyshell = new PythonShell('detect_in.py',options);
                     pyshell.on('message', function (result) {
                         isEnter = result
                         if(result) resolve(result)
@@ -93,13 +55,11 @@ module.exports = (function() {
         });
     })
     .then("the player should stay stopped",function(){
-        app.webContents.reload()
-        app.webContents.send('playProgramRequest',{},0)
+        // app.webContents.send('playProgramRequest',{},0)
         return app.client.getAttribute('video','src')
         .then(result=>{ 
-            // console.log(result)
             if(result !== ''){
-                assert.fail('the player should stay stopped')
+                assert.fail('the program does not stop')
             }
         })
     })

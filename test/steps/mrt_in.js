@@ -8,6 +8,9 @@ const utils = require('../../app/back/utils.js')
 const Application = require('spectron').Application
 const electronPath = require('electron')
 const path = require('path')
+const serverAPI = require('../../app/back/serverAPI.js')
+const audioHandler = require('../../app/back/audioTableHandler.js')
+const s3 = require('../../app/back/s3.js')
 
 
 module.exports = (function() {
@@ -19,63 +22,42 @@ module.exports = (function() {
         })
         return app.start()
       })
-    let programList = [{ userName: 'Play1321',
-    clip: [{name:'let it go',duration:'3:30'}],
-    panelName: '台北車站1號出口',
-    period: {
-      day: '星期四',
-      startTime: '00:00',
-      endTime: '23:59' 
-        }}
-    ]
     let _programTable
     let _currentProgram
-    let emptyProgramTable = {
-        '星期一': [],
-        '星期二': [],
-        '星期三': [],
-        '星期四': [],
-        '星期五': [],
-        '星期六': [],
-        '星期日': []
-      }
+
     let isEnter
     let isEmpty = true
     var library = English.library()
     
     .given("the player has opened",function(){
-        return new Promise(function(resolve, reject) {            
-            let _emptyProgramTable = utils.getProgramTable()
-            resolve(true)
-        });
     })
     .given("User already push a program to CMS", function() {
-        return new Promise(function(resolve, reject) {
-            utils.initProgramTable(programList)
-            .then(()=>{})
-            _programTable = utils.getProgramTable()
-            _currentProgram = utils.getCurrentProgram()
-            for(var index in _programTable) { 
-                if(_programTable[index] !== '') isEmpty = false
-            }
-            if(isEmpty) {
-                assert.fail('programTable is empty')
-                resolve()
-            }
-            else {
-                assert(true)
-                resolve()
-            }
+        serverAPI.getProgramByPanelName('JEFF_MAC')
+        .then(result=>{
+            return utils.initProgramTable(result.data)
         })
-    })
-    .given("User has no program in CMS",function(){
-        return new Promise(function(resolve, reject) {
-            let _emptyProgramTable = utils.getProgramTable()
-            for(var index in _emptyProgramTable) { 
-                if(_emptyProgramTable[index] === undefined) assert.fail('there is already a program in CMS')
-            }
-            resolve(true)
-        });
+        .then(function () {
+        return s3.getClipInfoByProgramTable(utils.getProgramTable())
+        })
+        .then(function (clipInfoList) {
+        let downloadList =utils.filterClipInfoList(clipInfoList)
+        audioHandler.createAudioTable(downloadList)
+        return downloadList
+        })
+        .then(function (downloadList) {
+        return s3.downloadClipFromS3(downloadList)
+        })
+
+        let _programTable = utils.getProgramTable()
+        for(var index in _programTable) { 
+            if(_programTable[index] !== '') isEmpty = false
+        }
+        if(isEmpty) {
+            assert.fail('programTable is empty')
+        }
+        else {
+            assert(true)
+        }
     })
     .when("MRT is enter the station", function() {
         app.webContents.send('playProgramRequest',{},0) 
@@ -101,15 +83,6 @@ module.exports = (function() {
             }
         })
         
-    })
-    .then("the player should stay stopped",function(){
-        // app.webContents.send('playProgramRequest',{},0)
-        return app.client.getAttribute('video','src')
-        .then(result=>{ 
-            if(result !== ''){
-                assert.fail('the program does not stop')
-            }
-        })
     })
     after(function () {
         if (app && app.isRunning()) {

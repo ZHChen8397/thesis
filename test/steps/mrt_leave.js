@@ -88,7 +88,7 @@ module.exports = (function() {
                 var options = {
                     scriptPath: './pyforJS'
                     };
-                    var pyshell = new PythonShell('detect_in.py',options);
+                    var pyshell = new PythonShell('detect_leave.py',options);
                     pyshell.on('message', function (result) {
                         isEnter = result
                         if(result) resolve(result)

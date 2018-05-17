@@ -1,11 +1,8 @@
-Feature: MRT enter the station test
+Feature: MRT enter the station
 
-Background:
-    Given the player has opened
+Scenario: There are ads ready to play
 
-Scenario: There is a program in CMS
-
-    Given User already push a program to CMS  
+    Given The player has opened and already has ads playing 
     When MRT is enter the station
-    Then the player should stop the program
+    Then the player should stop the ads
 

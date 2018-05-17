@@ -29,9 +29,7 @@ module.exports = (function() {
     let isEmpty = true
     var library = English.library()
     
-    .given("the player has opened",function(){
-    })
-    .given("User already push a program to CMS", function() {
+    .given("The player has opened and already has ads playing", function() {
         serverAPI.getProgramByPanelName('JEFF_MAC')
         .then(result=>{
             return utils.initProgramTable(result.data)
@@ -60,6 +58,7 @@ module.exports = (function() {
         }
     })
     .when("MRT is enter the station", function() {
+        app.webContents.reload()
         app.webContents.send('playProgramRequest',{},0) 
         return new Promise(function(resolve, reject) {
             setTimeout(function() {
@@ -75,9 +74,10 @@ module.exports = (function() {
             }, 100);
         });
     })
-    .then("the player should stop the program", function() {
+    .then("the player should stop the ads", function() {
         return app.client.getAttribute('video','src')
         .then(result=>{ 
+            // console.log(result)
             if(result !== ''){
                 assert.fail('the program does not stop')
             }

@@ -49,10 +49,7 @@ module.exports = (function() {
     let isEnter
     let isEmpty = true
     var library = English.library()
-    
-    .given("the player has opened",function(){
-    })
-    .given("User already push a program to CMS", function() {
+    .given("The player has opened and has ads ready to play", function() {
         serverAPI.getProgramByPanelName('JEFF_MAC')
         .then(result=>{
             return utils.initProgramTable(result.data)
@@ -97,7 +94,7 @@ module.exports = (function() {
             }, 100);
         });
     })
-    .then("the player should start playing program", function() {
+    .then("the player should start to play", function() {
         return app.client.getAttribute('video','src')
         .then(result=>{ 
             // console.log(result)

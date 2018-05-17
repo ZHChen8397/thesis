@@ -52,7 +52,7 @@ module.exports = (function() {
     
     .given("the player has opened",function(){
     })
-    .given("User already push a program to CMS", function() {
+    .given("the player already has ads playing", function() {
         serverAPI.getProgramByPanelName('JEFF_MAC')
         .then(result=>{
             return utils.initProgramTable(result.data)
@@ -80,7 +80,7 @@ module.exports = (function() {
             assert(true)
         }
     })
-    .given("User has no program in CMS",function(){
+    .given("the player has no ad to play",function(){
         return new Promise(function(resolve, reject) {
             let _emptyProgramTable = utils.getProgramTable()
             for(var index in _emptyProgramTable) { 

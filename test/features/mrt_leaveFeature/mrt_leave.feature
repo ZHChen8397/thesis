@@ -1,10 +1,7 @@
-Feature: MRT leave the station test
+Feature: MRT leave the station 
 
-Background:
-    Given the player has opened
+Scenario: There are ads ready to play
 
-Scenario: There is a program in CMS
-
-    Given User already push a program to CMS
+    Given The player has opened and has ads ready to play
     When MRT leave the station over 15 seconds
-    Then the player should start playing program
+    Then the player should start to play

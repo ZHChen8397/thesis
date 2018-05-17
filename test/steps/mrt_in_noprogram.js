@@ -27,9 +27,7 @@ module.exports = (function() {
     let isEmpty = true
     var library = English.library()
     
-    .given("the player has opened",function(){
-    })
-    .given("User has no program in CMS",function(){
+    .given("the player has opened and has no ad to play",function(){
         return new Promise(function(resolve, reject) {
             let _emptyProgramTable = utils.getProgramTable()
             for(var index in _emptyProgramTable) { 

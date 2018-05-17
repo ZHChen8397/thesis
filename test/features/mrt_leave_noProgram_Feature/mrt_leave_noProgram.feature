@@ -1,10 +1,7 @@
-Feature: MRT leave the station with no program test
+Feature: MRT leave the station 
 
-Background:
-    Given the player has opened
+Scenario: There is no ad to play
 
-Scenario: There is no program in CMS
-
-    Given User has no program in CMS
+    Given the player has opened and has no ad to play
     When MRT leave the station over 15 seconds
     Then the player should stay stopped

@@ -1,9 +1,7 @@
-Feature: MRT enter the station with no program test
+Feature: MRT enter the station 
 
-Background:
-    Given the player has opened
-Scenario: There is no program in CMS
+Scenario: There is no ad to play
 
-    Given User has no program in CMS
+    Given the player has opened and has no ad to play
     When MRT is enter the station
     Then the player should stay stopped

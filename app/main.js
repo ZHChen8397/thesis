@@ -17,7 +17,7 @@ const io = require('socket.io')(http)
 const cors = require('cors')
 const panelIP = require('ip').address()
 const moment = require('moment')
-const MRTDETECTOR_DOMAIN = 'http://140.124.181.149:1321' 
+const MRTDETECTOR_DOMAIN = 'http://localhost:1321' 
 let clientSocket
 
 let panelName

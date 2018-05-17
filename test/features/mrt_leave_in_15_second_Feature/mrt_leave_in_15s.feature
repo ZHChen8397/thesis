@@ -1,17 +1,17 @@
-Feature: MRT leave the station less than 15 seconds test
+Feature: MRT leave the station less than 15 seconds 
 
 Background:
     Given the player has opened
 
-Scenario: There is a program in CMS
+Scenario: There are ads ready to play
 
-    Given User already push a program to CMS
+    Given the player already has ads playing
     When MRT leave the station less than 15 seconds
     Then the player should stay stopped
 
-Scenario: There is no program in CMS
+Scenario: There is no ad to play
 
-    Given User has no program in CMS
+    Given the player has no ad to play
     When MRT leave the station less than 15 seconds
     Then the player should stay stopped
 

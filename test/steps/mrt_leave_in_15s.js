@@ -52,7 +52,7 @@ module.exports = (function() {
     
     .given("the player has opened",function(){
     })
-    .given("the player already has ads playing", function() {
+    .given("The player has opened and has ads in playList", function() {
         serverAPI.getProgramByPanelName('JEFF_MAC')
         .then(result=>{
             return utils.initProgramTable(result.data)
@@ -80,7 +80,7 @@ module.exports = (function() {
             assert(true)
         }
     })
-    .given("the player has no ad to play",function(){
+    .given("The player has opened and has no ad in playList",function(){
         return new Promise(function(resolve, reject) {
             let _emptyProgramTable = utils.getProgramTable()
             for(var index in _emptyProgramTable) { 

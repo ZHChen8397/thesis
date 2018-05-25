@@ -1,14 +1,15 @@
 import cv2
-import numpy as np
-MIN_MATCH_COUNT=50
-detector=cv2.xfeatures2d.SIFT_create()
+import numpy as np                                          #1
+
+MIN_MATCH_COUNT=50                                                 
+detector=cv2.xfeatures2d.SIFT_create()                      #2
 
 FLANN_INDEX_KDITREE=0
 flannParam=dict(algorithm=FLANN_INDEX_KDITREE,tree=5)
-flann=cv2.FlannBasedMatcher(flannParam,{})
+flann=cv2.FlannBasedMatcher(flannParam,{})                  #3
 
 trainImg=cv2.imread("./image/book.jpg",cv2.COLOR_BGR2GRAY)
-trainKP,trainDesc=detector.detectAndCompute(trainImg,None)
+trainKP,trainDesc=detector.detectAndCompute(trainImg,None)  #4
 
 
 def cam():
@@ -36,7 +37,6 @@ def cam():
             trainBorder=np.float32([[[0,0],[0,h-1],[w-1,h-1],[w-1,0]]])
             frameBorder=cv2.perspectiveTransform(trainBorder,H)
             cv2.polylines(frame,[np.int32(frameBorder)],True,(0,255,0),5)
-            # print("MRT didn't enter the station yet!")
             if count > 15:
                 print("MRT leave the station")
                 count = 0
@@ -44,7 +44,6 @@ def cam():
             else:
                 count +=1
         else:
-            # print ("Not Enough match found- %d/%d" % (len(goodMatch),MIN_MATCH_COUNT))
            print("MRT didn't leave the station yet!")
         cv2.imshow('result',frame)
         k = cv2.waitKey(30) & 0xff

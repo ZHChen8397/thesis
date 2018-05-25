@@ -27,7 +27,7 @@ module.exports = (function() {
     let isEmpty = true
     var library = English.library()
     
-    .given("the player has opened and has no ad to play",function(){
+    .given("The player has opened and has no ad in playList",function(){
         return new Promise(function(resolve, reject) {
             let _emptyProgramTable = utils.getProgramTable()
             for(var index in _emptyProgramTable) { 
@@ -36,7 +36,7 @@ module.exports = (function() {
             resolve(true)
         });
     })
-    .when("MRT is enter the station", function() {
+    .when("MRT enter the station", function() {
         app.webContents.send('playProgramRequest',{},0) 
         return new Promise(function(resolve, reject) {
             setTimeout(function() {
@@ -52,7 +52,7 @@ module.exports = (function() {
             }, 100);
         });
     })
-    .then("the player should stay stopped",function(){
+    .then("The player should stay stopped",function(){
         // app.webContents.send('playProgramRequest',{},0)
         return app.client.getAttribute('video','src')
         .then(result=>{ 

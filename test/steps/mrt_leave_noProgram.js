@@ -60,14 +60,7 @@ module.exports = (function() {
     let isEmpty = true
     var library = English.library()
     
-    .given("the player has opened",function(){
-        return new Promise(function(resolve, reject) {
-            _emptyProgramTable = utils.getProgramTable()
-            resolve()
-        });
-        
-    })
-    .given("the player has opened and has no ad to play",function(){
+    .given("The player has opened and has no ad in playList",function(){
         return new Promise(function(resolve, reject) {
             let _emptyProgramTable = utils.getProgramTable()
             for(var index in _emptyProgramTable) { 
@@ -92,7 +85,7 @@ module.exports = (function() {
             }, 100);
         });
     })
-    .then("the player should stay stopped",function(){
+    .then("The player should stay stopped",function(){
         app.webContents.reload()
         app.webContents.send('playProgramRequest',{},0)
         return app.client.getAttribute('video','src')

@@ -49,7 +49,7 @@ module.exports = (function() {
     let isEnter
     let isEmpty = true
     var library = English.library()
-    .given("The player has opened and has ads ready to play", function() {
+    .given("The player has opened and has ads in playList", function() {
         serverAPI.getProgramByPanelName('JEFF_MAC')
         .then(result=>{
             return utils.initProgramTable(result.data)
@@ -94,7 +94,7 @@ module.exports = (function() {
             }, 100);
         });
     })
-    .then("the player should start to play", function() {
+    .then("The player should start to play", function() {
         return app.client.getAttribute('video','src')
         .then(result=>{ 
             // console.log(result)
@@ -103,6 +103,45 @@ module.exports = (function() {
             }
         })
         
+    })
+
+    .given("The player has opened and has no ad in playList",function(){
+        return new Promise(function(resolve, reject) {
+            let _emptyProgramTable = utils.getProgramTable()
+            for(var index in _emptyProgramTable) { 
+                if(_emptyProgramTable[index] === undefined) assert.fail('there is already a program in CMS')
+            }
+            resolve(true)
+        });
+    })
+    .then("The player should stay stopped",function(){
+        app.webContents.reload()
+        app.webContents.send('playProgramRequest',{},0)
+        return app.client.getAttribute('video','src')
+        .then(result=>{ 
+            // console.log(result)
+            if(result !== ''){
+                assert.fail('the player should stay stopped')
+            }
+        })
+    })
+
+    .when("MRT leave the station less than 15 seconds", function() {
+        _currentProgram = utils.getCurrentProgram()
+        app.webContents.send('playProgramRequest',{},0) 
+        return new Promise(function(resolve, reject) {
+            setTimeout(function() {
+                var options = {
+                    scriptPath: './pyforJS'
+                    };
+                    var pyshell = new PythonShell('detect_leave_less_than_15s.py',options);
+                    pyshell.on('message', function (result) {
+                        isEnter = result
+                        if(result) resolve(result)
+                        else reject(result)
+                    });
+            }, 100);
+        });
     })
     after(function () {
         if (app && app.isRunning()) {

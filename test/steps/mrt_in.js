@@ -29,7 +29,7 @@ module.exports = (function() {
     let isEmpty = true
     var library = English.library()
     
-    .given("The player has opened and already has ads playing", function() {
+    .given("The player has opened and has ads in playList", function() {
         serverAPI.getProgramByPanelName('JEFF_MAC')
         .then(result=>{
             return utils.initProgramTable(result.data)
@@ -57,10 +57,10 @@ module.exports = (function() {
             assert(true)
         }
     })
-    .when("MRT is enter the station", function() {
-        app.webContents.reload()
-        app.webContents.send('playProgramRequest',{},0) 
+    .when("MRT enter the station", function() {
         return new Promise(function(resolve, reject) {
+            app.webContents.reload()
+            app.webContents.send('playProgramRequest',{},0) 
             setTimeout(function() {
                 var options = {
                     scriptPath: './pyforJS'
@@ -74,7 +74,7 @@ module.exports = (function() {
             }, 100);
         });
     })
-    .then("the player should stop the ads", function() {
+    .then("The player should stop the ads", function() {
         return app.client.getAttribute('video','src')
         .then(result=>{ 
             // console.log(result)
@@ -84,6 +84,26 @@ module.exports = (function() {
         })
         
     })
+
+    .given("The player has opened and has no ad in playList",function(){
+        return new Promise(function(resolve, reject) {
+            let _emptyProgramTable = utils.getProgramTable()
+            for(var index in _emptyProgramTable) { 
+                if(_emptyProgramTable[index] === undefined) assert.fail('there is already a program in CMS')
+            }
+            resolve(true)
+        });
+    })
+    .then("The player should stay stopped",function(){
+        // app.webContents.send('playProgramRequest',{},0)
+        return app.client.getAttribute('video','src')
+        .then(result=>{ 
+            if(result !== ''){
+                assert.fail('the program does not stop')
+            }
+        })
+    })
+
     after(function () {
         if (app && app.isRunning()) {
             return app.stop()

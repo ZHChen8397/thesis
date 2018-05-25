@@ -1,7 +1,7 @@
 Feature: MRT enter the station 
 
-Scenario: There is no ad to play
+Scenario: There is no ad ready to play in playList when MRT enter the station
 
-    Given the player has opened and has no ad to play
-    When MRT is enter the station
-    Then the player should stay stopped
+    Given The player has opened and has no ad in playList
+    When MRT enter the station
+    Then The player should stay stopped

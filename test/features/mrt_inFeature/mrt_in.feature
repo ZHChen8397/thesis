@@ -1,17 +1,17 @@
-Feature: player stop the advertisements when MRT enter the station 
+Feature: player stop the advertisements when MRT arrive the station 
 
 In order to save on the cost of playing ads
 As an advertiser
-I want player stop playing the advertisements after MRT enter the station whenever there are ads or not in playList
+I want player stop playing the advertisements after MRT arrive the station
 
-Scenario: There are ads ready to play in playList when MRT enter the station
+Scenario: There are ads ready to play in playList when MRT arrive the station
 
     Given The player has opened and has ads in playList 
-    When MRT enter the station
+    When MRT arrive the station
     Then The player should stop the ads
 
-Scenario: There is no ad ready to play in playList when MRT enter the station
+Scenario: There is no ad ready to play in playList when MRT arrive the station
 
     Given The player has opened and has no ad in playList
-    When MRT enter the station
+    When MRT arrive the station
     Then The player should stay stopped

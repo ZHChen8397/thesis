@@ -1,6 +1,6 @@
 import cv2
 import numpy as np
-MIN_MATCH_COUNT=50
+MIN_MATCH_COUNT=90
 detector=cv2.xfeatures2d.SIFT_create()
 
 FLANN_INDEX_KDITREE=0

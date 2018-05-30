@@ -89,7 +89,7 @@ module.exports = (function() {
             resolve(true)
         });
     })
-    .when("MRT leave the station less than 15 seconds", function() {
+    .when("MRT depart the station less than 15 seconds", function() {
         _currentProgram = utils.getCurrentProgram()
         app.webContents.send('playProgramRequest',{},0) 
         return new Promise(function(resolve, reject) {

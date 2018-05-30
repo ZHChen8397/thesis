@@ -69,7 +69,7 @@ module.exports = (function() {
             resolve(true)
         });
     })
-    .when("MRT leave the station over 15 seconds", function() {
+    .when("MRT depart the station over 15 seconds", function() {
         app.webContents.send('playProgramRequest',_currentProgram,0) 
         return new Promise(function(resolve, reject) {
             setTimeout(function() {

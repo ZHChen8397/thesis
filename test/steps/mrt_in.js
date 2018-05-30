@@ -57,7 +57,7 @@ module.exports = (function() {
             assert(true)
         }
     })
-    .when("MRT enter the station", function() {
+    .when("MRT arrive the station", function() {
         return new Promise(function(resolve, reject) {
             app.webContents.reload()
             app.webContents.send('playProgramRequest',{},0) 

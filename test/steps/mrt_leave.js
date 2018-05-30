@@ -77,7 +77,7 @@ module.exports = (function() {
             assert(true)
         }
     })
-    .when("MRT leave the station over 15 seconds", function() {
+    .when("MRT depart the station over 15 seconds", function() {
         _currentProgram = utils.getCurrentProgram()
         app.webContents.send('playProgramRequest',_currentProgram,0) 
         return new Promise(function(resolve, reject) {
@@ -126,7 +126,7 @@ module.exports = (function() {
         })
     })
 
-    .when("MRT leave the station less than 15 seconds", function() {
+    .when("MRT depart the station less than 15 seconds", function() {
         _currentProgram = utils.getCurrentProgram()
         app.webContents.send('playProgramRequest',{},0) 
         return new Promise(function(resolve, reject) {

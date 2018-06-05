@@ -15,6 +15,7 @@ const s3 = require('../../app/back/s3.js')
 
 module.exports = (function() {
     let app
+
     before(function () {
         app = new Application({
           path: electronPath,
@@ -30,20 +31,20 @@ module.exports = (function() {
     var library = English.library()
     
     .given("The player has opened and has ads in playList", function() {
-        serverAPI.getProgramByPanelName('JEFF_MAC')
+        serverAPI.getProgramByPanelName('JEFF_MAC_player')
         .then(result=>{
             return utils.initProgramTable(result.data)
         })
         .then(function () {
-        return s3.getClipInfoByProgramTable(utils.getProgramTable())
+            return s3.getClipInfoByProgramTable(utils.getProgramTable())
         })
         .then(function (clipInfoList) {
         let downloadList =utils.filterClipInfoList(clipInfoList)
         audioHandler.createAudioTable(downloadList)
-        return downloadList
+            return downloadList
         })
         .then(function (downloadList) {
-        return s3.downloadClipFromS3(downloadList)
+            return s3.downloadClipFromS3(downloadList)
         })
 
         let _programTable = utils.getProgramTable()
@@ -60,7 +61,7 @@ module.exports = (function() {
     .when("MRT arrive the station", function() {
         return new Promise(function(resolve, reject) {
             app.webContents.reload()
-            app.webContents.send('playProgramRequest',{},0) 
+            // app.webContents.send('playProgramRequest',program,0) 
             setTimeout(function() {
                 var options = {
                     scriptPath: './pyforJS'

@@ -135,26 +135,27 @@ function initIpcProcess () {
     let currentProgram = utils.getCurrentProgram()
     if(currentProgram) {
       updateRecordRequest(currentProgram)
-      if (currentProgram.clip.length - 1 === clipIndex) clipIndex = 0
-      else clipIndex++
-      currentClip = currentProgram.clip[clipIndex]
-      switch (utils.isExtendPlayByMRT(currentProgram.clip[clipIndex].duration,startOfNotPlay)){ // 先判斷MRT延長，再判斷program延長
-        case true:
-          if(utils.isExtendPlayByProgram(currentProgram,clipIndex)){
-            mainWindow.webContents.send('playProgramRequest', currentProgram, clipIndex)
-          }else{
-            mainWindow.webContents.send('playProgramRequest', undefined)
-            io.emit('isPlaying', false)
-            isPlaying = false
-            pollNextProgram(JSON.stringify(currentProgram))
-          }
-          break;
-        case false:
-          mainWindow.webContents.send('playProgramRequest', undefined)
-          io.emit('isPlaying', false)
-          isPlaying = false
-          break;
-      }
+      mainWindow.webContents.send('playProgramRequest', currentProgram, clipIndex)
+      // if (currentProgram.clip.length - 1 === clipIndex) clipIndex = 0
+      // else clipIndex++
+      // currentClip = currentProgram.clip[clipIndex]
+      // switch (utils.isExtendPlayByMRT(currentProgram.clip[clipIndex].duration,startOfNotPlay)){ // 先判斷MRT延長，再判斷program延長
+      //   case true:
+      //     if(utils.isExtendPlayByProgram(currentProgram,clipIndex)){
+      //       mainWindow.webContents.send('playProgramRequest', currentProgram, clipIndex)
+      //     }else{
+      //       mainWindow.webContents.send('playProgramRequest', undefined)
+      //       io.emit('isPlaying', false)
+      //       isPlaying = false
+      //       pollNextProgram(JSON.stringify(currentProgram))
+      //     }
+      //     break;
+      //   case false:
+      //     mainWindow.webContents.send('playProgramRequest', undefined)
+      //     io.emit('isPlaying', false)
+      //     isPlaying = false
+      //     break;
+      // }
       io.emit('updateCurrentClip')
     }else {
       mainWindow.webContents.send('playProgramRequest', undefined)
@@ -184,54 +185,59 @@ if (process.env.NODE_ENV !== 'test') {
 let isPlaying
 
 function initSocketChannel () {
-  console.log(`initSocketChannel`)
-  clientSocket = require('socket.io-client').connect(MRTDETECTOR_DOMAIN)
+  playController(true)
+  // console.log(`initSocketChannel`)
+  // clientSocket = require('socket.io-client').connect(MRTDETECTOR_DOMAIN)
 
-  clientSocket.on('firstConnect', function (data) {
-    console.log(`[firstConnect] = ${JSON.stringify(data,null,2)}`)
-    startOfNotPlay = data.startOfNotPlay
-    playController(data.canPlay)
-  })
+  // clientSocket.on('firstConnect', function (data) {
+  //   console.log(`[firstConnect] = ${JSON.stringify(data,null,2)}`)
+  //   startOfNotPlay = data.startOfNotPlay
+  //   playController(true)
+  // })
 
-  clientSocket.on('updateStatus', function (data) {
-    console.log(`[updateStatus] = ${data}`)
-    playController(data)
-  })
+  // clientSocket.on('updateStatus', function (data) {
+  //   console.log(`[updateStatus] = ${data}`)
+  //   playController(true)
+  // })
   
-  clientSocket.on('updateStartOfNotPlay', function(time){
-    startOfNotPlay = time
-  })
+  // clientSocket.on('updateStartOfNotPlay', function(time){
+  //   startOfNotPlay = time
+  // })
 }
 let golbalStatus = undefined
 function playController (status) {
   golbalStatus = status
-  if (status && utils.getCurrentProgram()) {
-    s3.checkProgramCanPlay(utils.getCurrentProgram(), function (err, checkResult) {
-      if(err){console.log('\033[37m',`[checkProgramCanPlay error] ${err.message}`)}
-      if (checkResult && utils.isExtendPlayByProgram(utils.getCurrentProgram(),clipIndex)) {
-        switch (utils.isExtendPlayByMRT(utils.getCurrentProgram().clip[clipIndex].duration,startOfNotPlay)){
-          case true :
-            currentClip = utils.getCurrentProgram().clip[clipIndex]
-            mainWindow.webContents.send('playProgramRequest', utils.getCurrentProgram(), clipIndex)
-            io.emit('isPlaying', true)
-            isPlaying = true
-            break;
-          case false :
-            currentClip = undefined
-            clipIndex = 0
-            mainWindow.webContents.send('playProgramRequest', undefined)
-            io.emit('isPlaying', false)
-            isPlaying = false
-            break;
-        }
-      } else {
-        setTimeout(function () { playController(true) }, 1000)
-      }
-    })
-  }
-  else if(status && !utils.getCurrentProgram() && !isPolling){
-    pollNextProgram()
-  } 
+  mainWindow.webContents.send('playProgramRequest', utils.getCurrentProgram(), clipIndex)
+  // console.log(JSON.stringify(utils.getCurrentProgram(),null,2))
+  io.emit('isPlaying', true)
+  isPlaying = true
+  // if (status && utils.getCurrentProgram()) {
+  //   s3.checkProgramCanPlay(utils.getCurrentProgram(), function (err, checkResult) {
+  //     if(err){console.log('\033[37m',`[checkProgramCanPlay error] ${err.message}`)}
+  //     if (checkResult && utils.isExtendPlayByProgram(utils.getCurrentProgram(),clipIndex)) {
+  //       switch (utils.isExtendPlayByMRT(utils.getCurrentProgram().clip[clipIndex].duration,startOfNotPlay)){
+  //         case true :
+  //           currentClip = utils.getCurrentProgram().clip[clipIndex]
+  //           mainWindow.webContents.send('playProgramRequest', utils.getCurrentProgram(), clipIndex)
+  //           io.emit('isPlaying', true)
+  //           isPlaying = true
+  //           break;
+  //         case false :
+  //           currentClip = undefined
+  //           clipIndex = 0
+  //           mainWindow.webContents.send('playProgramRequest', undefined)
+  //           io.emit('isPlaying', false)
+  //           isPlaying = false
+  //           break;
+  //       }
+  //     } else {
+  //       setTimeout(function () { playController(true) }, 1000)
+  //     }
+  //   })
+  // }
+  // else if(status && !utils.getCurrentProgram() && !isPolling){
+  //   pollNextProgram()
+  // } 
 }
 
 let temp = undefined

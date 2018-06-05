@@ -8,7 +8,7 @@ flannParam=dict(algorithm=FLANN_INDEX_KDITREE,tree=5)
 searchparam = dict(checks = 75)
 flann=cv2.FlannBasedMatcher(flannParam,searchparam)
 
-trainImg=cv2.imread("./image/mrt.png")
+trainImg=cv2.imread("./image/book.jpg")
 trainKP,trainDesc=detector.detectAndCompute(trainImg,None)
 
 

@@ -5,9 +5,10 @@ detector=cv2.xfeatures2d.SIFT_create()
 
 FLANN_INDEX_KDITREE=0
 flannParam=dict(algorithm=FLANN_INDEX_KDITREE,tree=5)
-flann=cv2.FlannBasedMatcher(flannParam,{})
+searchparam = dict(checks = 75)
+flann=cv2.FlannBasedMatcher(flannParam,searchparam)
 
-trainImg=cv2.imread("./image/book.jpg",cv2.COLOR_BGR2GRAY)
+trainImg=cv2.imread("./image/mrt.png")
 trainKP,trainDesc=detector.detectAndCompute(trainImg,None)
 
 
@@ -16,13 +17,13 @@ def cam():
     count = 0
     while True:
         ret, frame=cam.read()
-        frameImg=cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)
-        frameKP,frameDesc=detector.detectAndCompute(frameImg,None)
+        # frameImg=cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)
+        frameKP,frameDesc=detector.detectAndCompute(frame,None)
         matches=flann.knnMatch(frameDesc,trainDesc,k=2)
 
         goodMatch=[]
         for m,n in matches:
-            if m.distance < 0.75*n.distance:
+            if m.distance < 0.7*n.distance:
                 goodMatch.append(m)
         if len(goodMatch) > MIN_MATCH_COUNT:
             tp=[]
@@ -36,15 +37,14 @@ def cam():
             trainBorder=np.float32([[[0,0],[0,h-1],[w-1,h-1],[w-1,0]]])
             frameBorder=cv2.perspectiveTransform(trainBorder,H)
             cv2.polylines(frame,[np.int32(frameBorder)],True,(0,255,0),5)
-            print("MRT didn't enter the station yet!")
-        else:
-            # print ("Not Enough match found- %d/%d" % (len(goodMatch),MIN_MATCH_COUNT))
-            if count > 15:
-                print("MRT enter the station")
+            print("MRT didn't arrive the station yet!")
+            count +=1
+            if count > 5:
+                print("MRT arrive the station")
                 count = 0
                 return True
-            else:
-                count +=1
+        else: 
+            count = 0
         cv2.imshow('result',frame)
         k = cv2.waitKey(30) & 0xff
         if k == 27:

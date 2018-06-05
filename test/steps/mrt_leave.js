@@ -85,7 +85,7 @@ module.exports = (function() {
                 var options = {
                     scriptPath: './pyforJS'
                     };
-                    var pyshell = new PythonShell('detect_leave.py',options);
+                    var pyshell = new PythonShell('detect_depart.py',options);
                     pyshell.on('message', function (result) {
                         isEnter = result
                         if(result) resolve(result)
@@ -114,6 +114,23 @@ module.exports = (function() {
             resolve(true)
         });
     })
+    .when("MRT depart the station less than 15 seconds", function() {
+        _currentProgram = utils.getCurrentProgram()
+        app.webContents.send('playProgramRequest',{},0) 
+        return new Promise(function(resolve, reject) {
+            setTimeout(function() {
+                var options = {
+                    scriptPath: './pyforJS'
+                    };
+                    var pyshell = new PythonShell('detect_depart_less_than_15s.py',options);
+                    pyshell.on('message', function (result) {
+                        isEnter = result
+                        if(result) resolve(result)
+                        else reject(result)
+                    });
+            }, 100);
+        });
+    })
     .then("The player should stay stopped",function(){
         app.webContents.reload()
         app.webContents.send('playProgramRequest',{},0)
@@ -124,24 +141,6 @@ module.exports = (function() {
                 assert.fail('the player should stay stopped')
             }
         })
-    })
-
-    .when("MRT depart the station less than 15 seconds", function() {
-        _currentProgram = utils.getCurrentProgram()
-        app.webContents.send('playProgramRequest',{},0) 
-        return new Promise(function(resolve, reject) {
-            setTimeout(function() {
-                var options = {
-                    scriptPath: './pyforJS'
-                    };
-                    var pyshell = new PythonShell('detect_leave_less_than_15s.py',options);
-                    pyshell.on('message', function (result) {
-                        isEnter = result
-                        if(result) resolve(result)
-                        else reject(result)
-                    });
-            }, 100);
-        });
     })
     after(function () {
         if (app && app.isRunning()) {

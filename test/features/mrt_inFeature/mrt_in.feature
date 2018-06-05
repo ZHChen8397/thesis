@@ -8,10 +8,4 @@ Scenario: There are ads ready to play in playList when MRT arrive the station
 
     Given The player has opened and has ads in playList 
     When MRT arrive the station
-    Then The player should stop the ads
-
-Scenario: There is no ad ready to play in playList when MRT arrive the station
-
-    Given The player has opened and has no ad in playList
-    When MRT arrive the station
-    Then The player should stay stopped
+    Then The player should stop playing the ads

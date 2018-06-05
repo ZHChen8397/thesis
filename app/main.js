@@ -33,7 +33,7 @@ function createWindow () {
   mainWindow = new BrowserWindow({
     title: 'Electron Video Player',
     'accept-first-mouse': true,
-    'fullscreen': true,
+    'fullscreen': false,
     frame: false,
     icon: path.join(__dirname, '/img/logo-256.png'),
     'text-areas-are-resizable': false

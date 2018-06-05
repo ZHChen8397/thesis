@@ -50,8 +50,6 @@ module.exports = (function() {
     let isEmpty = true
     var library = English.library()
     
-    .given("the player has opened",function(){
-    })
     .given("The player has opened and has ads in playList", function() {
         serverAPI.getProgramByPanelName('JEFF_MAC')
         .then(result=>{
@@ -97,7 +95,7 @@ module.exports = (function() {
                 var options = {
                     scriptPath: './pyforJS'
                     };
-                    var pyshell = new PythonShell('detect_leave_less_than_15s.py',options);
+                    var pyshell = new PythonShell('detect_depart_less_than_15s.py',options);
                     pyshell.on('message', function (result) {
                         isEnter = result
                         if(result) resolve(result)
@@ -106,7 +104,7 @@ module.exports = (function() {
             }, 100);
         });
     })
-    .then("the player should stay stopped",function(){
+    .then("The player should stay stopped",function(){
         app.webContents.reload()
         app.webContents.send('playProgramRequest',{},0)
         return app.client.getAttribute('video','src')

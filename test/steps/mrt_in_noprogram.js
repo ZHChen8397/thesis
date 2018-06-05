@@ -36,7 +36,7 @@ module.exports = (function() {
             resolve(true)
         });
     })
-    .when("MRT enter the station", function() {
+    .when("MRT arrive the station", function() {
         app.webContents.send('playProgramRequest',{},0) 
         return new Promise(function(resolve, reject) {
             setTimeout(function() {

@@ -65,7 +65,7 @@ module.exports = (function() {
                 var options = {
                     scriptPath: './pyforJS'
                     };
-                    var pyshell = new PythonShell('detect_in.py',options);
+                    var pyshell = new PythonShell('detect_arrive.py',options);
                     pyshell.on('message', function (result) {
                         isEnter = result
                         if(result) resolve(result)
@@ -74,7 +74,9 @@ module.exports = (function() {
             }, 100);
         });
     })
-    .then("The player should stop the ads", function() {
+    .then("The player should stop playing the ads", function() {
+        app.webContents.reload()
+        app.webContents.send('playProgramRequest',{},0) 
         return app.client.getAttribute('video','src')
         .then(result=>{ 
             // console.log(result)

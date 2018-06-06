@@ -7,7 +7,7 @@
   "author": "RIAEvangelist",
   "scripts": {
     "dev": "./node_modules/.bin/electron --js-flags=--harmony-async-await .",
-    "bdd": "mocha test_index.js --timeout 0",
+    "bdd": "mocha test_index.js --timeout 60000",
     "test": "mocha ./test/steps/mrt_in.js",
     "unit": "cross-env NODE_ENV=test nyc --reporter=cobertura --reporter=text --reporter=html mocha --require babel-polyfill --require babel-register test/unit/*.spec.js --exit"
   },

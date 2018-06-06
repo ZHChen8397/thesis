@@ -1,12 +1,13 @@
 import cv2
 import numpy as np
 import time
-MIN_MATCH_COUNT=50
+MIN_MATCH_COUNT=90
 detector=cv2.xfeatures2d.SIFT_create()
 
 FLANN_INDEX_KDITREE=0
 flannParam=dict(algorithm=FLANN_INDEX_KDITREE,tree=5)
-flann=cv2.FlannBasedMatcher(flannParam,{})
+searchParam = dict(checks=75)
+flann=cv2.FlannBasedMatcher(flannParam,searchParam)
 
 trainImg=cv2.imread("./image/book.jpg",cv2.COLOR_BGR2GRAY)
 trainKP,trainDesc=detector.detectAndCompute(trainImg,None)
@@ -23,7 +24,7 @@ def cam():
 
         goodMatch=[]
         for m,n in matches:
-            if m.distance < 0.75*n.distance:
+            if m.distance < 0.7*n.distance:
                 goodMatch.append(m)
         if len(goodMatch) > MIN_MATCH_COUNT:
             tp=[]

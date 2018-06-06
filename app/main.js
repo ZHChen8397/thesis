@@ -135,7 +135,9 @@ function initIpcProcess () {
     let currentProgram = utils.getCurrentProgram()
     if(currentProgram) {
       updateRecordRequest(currentProgram)
-      mainWindow.webContents.send('playProgramRequest', currentProgram, clipIndex)
+      let canplay = utils.getCanPlay()
+      if(canplay)mainWindow.webContents.send('playProgramRequest', currentProgram, clipIndex)
+      else mainWindow.webContents.send('playProgramRequest',{},0)
       // if (currentProgram.clip.length - 1 === clipIndex) clipIndex = 0
       // else clipIndex++
       // currentClip = currentProgram.clip[clipIndex]
@@ -185,7 +187,8 @@ if (process.env.NODE_ENV !== 'test') {
 let isPlaying
 
 function initSocketChannel () {
-  playController(true)
+  let canplay = utils.getCanPlay()
+  playController(canplay)
   // console.log(`initSocketChannel`)
   // clientSocket = require('socket.io-client').connect(MRTDETECTOR_DOMAIN)
 
@@ -207,7 +210,8 @@ function initSocketChannel () {
 let golbalStatus = undefined
 function playController (status) {
   golbalStatus = status
-  mainWindow.webContents.send('playProgramRequest', utils.getCurrentProgram(), clipIndex)
+  if(status)mainWindow.webContents.send('playProgramRequest', utils.getCurrentProgram(), clipIndex)
+  else mainWindow.webContents.send('playProgramRequest', {}, 0)
   // console.log(JSON.stringify(utils.getCurrentProgram(),null,2))
   io.emit('isPlaying', true)
   isPlaying = true

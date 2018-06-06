@@ -1,5 +1,6 @@
 import cv2
-import numpy as np                                          
+import numpy as np          
+import time                                
 
 MIN_MATCH_COUNT=90                                               
 detector=cv2.xfeatures2d.SIFT_create()                      
@@ -38,14 +39,15 @@ def cam():
             trainBorder=np.float32([[[0,0],[0,h-1],[w-1,h-1],[w-1,0]]])
             frameBorder=cv2.perspectiveTransform(trainBorder,H)
             cv2.polylines(frame,[np.int32(frameBorder)],True,(0,255,0),5)
-            if count > 15:
+            print("MRT didn't depart the station yet!")
+        else:
+            if count > 5:
+                time.sleep(15)
                 print("MRT depart the station")
                 count = 0
                 return True
             else:
                 count +=1
-        else:
-           print("MRT didn't depart the station yet!")
         cv2.imshow('result',frame)
         k = cv2.waitKey(30) & 0xff
         if k == 27:

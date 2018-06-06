@@ -11,11 +11,20 @@ const path = require('path')
 const serverAPI = require('../../app/back/serverAPI.js')
 const audioHandler = require('../../app/back/audioTableHandler.js')
 const s3 = require('../../app/back/s3.js')
-
-
+let program={
+    "userName": "Play1321",
+    "clip": [
+      {
+        "name": "tax",
+        "duration": 30
+      }
+    ],
+    "startTime": "06:00",
+    "endTime": "23:59",
+    "day": "星期二"
+  }
 module.exports = (function() {
     let app
-
     before(function () {
         app = new Application({
           path: electronPath,
@@ -31,6 +40,9 @@ module.exports = (function() {
     var library = English.library()
     
     .given("The player has opened and has ads in playList", function() {
+        utils.setCanPlay(true)
+        app.webContents.send('playProgramRequest',program,0) 
+        // app.webContents.reload()
         serverAPI.getProgramByPanelName('JEFF_MAC_player')
         .then(result=>{
             return utils.initProgramTable(result.data)
@@ -60,32 +72,39 @@ module.exports = (function() {
     })
     .when("MRT arrive the station", function() {
         return new Promise(function(resolve, reject) {
-            app.webContents.reload()
-            // app.webContents.send('playProgramRequest',program,0) 
             setTimeout(function() {
                 var options = {
                     scriptPath: './pyforJS'
-                    };
-                    var pyshell = new PythonShell('detect_arrive.py',options);
-                    pyshell.on('message', function (result) {
-                        isEnter = result
-                        if(result) resolve(result)
-                        else reject(result)
-                    });
+                };
+                var pyshell = new PythonShell('detect_arrive.py',options);
+                pyshell.on('message', function (result) {
+                    isEnter = result
+                    if(result) resolve(result)
+                    else reject(result)
+                });
             }, 100);
+            // app.webContents.reload()
+            // app.webContents.send('playProgramRequest',{},0) 
         });
     })
     .then("The player should stop playing the ads", function() {
-        app.webContents.reload()
-        app.webContents.send('playProgramRequest',{},0) 
-        return app.client.getAttribute('video','src')
-        .then(result=>{ 
-            // console.log(result)
-            if(result !== ''){
-                assert.fail('the program does not stop')
-            }
+        return new Promise(function(resolve,reject){
+            utils.setCanPlay(false)
+            app.webContents.send('playProgramRequest',{},0) 
+            app.webContents.reload()
+
+            setTimeout(() => {
+                resolve()
+            }, 5000);
         })
-        
+        return app.client.getAttribute('video','src')
+            .then(result=>{ 
+                if(result !== ''){
+                    assert.fail('the program does not stop')
+                }
+            })
+        // app.webContents.reload()
+        // app.webContents.send('playProgramRequest',{},0)
     })
 
     .given("The player has opened and has no ad in playList",function(){
@@ -98,9 +117,11 @@ module.exports = (function() {
         });
     })
     .then("The player should stay stopped",function(){
+        // app.webContents.reload()
         // app.webContents.send('playProgramRequest',{},0)
         return app.client.getAttribute('video','src')
         .then(result=>{ 
+            // console.log(result)
             if(result !== ''){
                 assert.fail('the program does not stop')
             }

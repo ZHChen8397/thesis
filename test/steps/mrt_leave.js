@@ -16,6 +16,18 @@ const audioHandler = require('../../app/back/audioTableHandler.js')
 
 module.exports = (function() {
     let app
+    let program={
+        "userName": "Play1321",
+        "clip": [
+          {
+            "name": "tax",
+            "duration": 30
+          }
+        ],
+        "startTime": "06:00",
+        "endTime": "23:59",
+        "day": "星期二"
+      }
     before(function () {
         app = new Application({
           path: electronPath,
@@ -50,7 +62,7 @@ module.exports = (function() {
     let isEmpty = true
     var library = English.library()
     .given("The player has opened and has ads in playList", function() {
-        serverAPI.getProgramByPanelName('JEFF_MAC')
+        serverAPI.getProgramByPanelName('JEFF_MAC_player')
         .then(result=>{
             return utils.initProgramTable(result.data)
         })
@@ -65,6 +77,10 @@ module.exports = (function() {
         .then(function (downloadList) {
         return s3.downloadClipFromS3(downloadList)
         })
+        .then(function(){
+            app.webContents.send('playProgramRequest',{},0) 
+            app.webContents.reload()
+        })
 
         let _programTable = utils.getProgramTable()
         for(var index in _programTable) { 
@@ -78,8 +94,8 @@ module.exports = (function() {
         }
     })
     .when("MRT depart the station over 15 seconds", function() {
-        _currentProgram = utils.getCurrentProgram()
-        app.webContents.send('playProgramRequest',_currentProgram,0) 
+        // _currentProgram = utils.getCurrentProgram()
+        // app.webContents.send('playProgramRequest',_currentProgram,0) 
         return new Promise(function(resolve, reject) {
             setTimeout(function() {
                 var options = {
@@ -95,9 +111,18 @@ module.exports = (function() {
         });
     })
     .then("The player should start to play", function() {
+        utils.setCanPlay(true)
+        app.webContents.send('playProgramRequest',program,0) 
+        return new Promise(function(resolve,reject){
+            // app.webContents.reload()
+            // app.webContents.send('playProgramRequest',program,0) 
+            setTimeout(() => {
+                resolve()
+            }, 5000);
+        })
         return app.client.getAttribute('video','src')
         .then(result=>{ 
-            // console.log(result)
+            console.log(result)
             if(result === ''){
                 assert.fail('the program does not start')
             }
@@ -132,8 +157,8 @@ module.exports = (function() {
         });
     })
     .then("The player should stay stopped",function(){
-        app.webContents.reload()
-        app.webContents.send('playProgramRequest',{},0)
+        // app.webContents.reload()
+        // app.webContents.send('playProgramRequest',{},0)
         return app.client.getAttribute('video','src')
         .then(result=>{ 
             // console.log(result)

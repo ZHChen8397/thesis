@@ -39,16 +39,16 @@ def cam():
             frameBorder=cv2.perspectiveTransform(trainBorder,H)
             cv2.polylines(frame,[np.int32(frameBorder)],True,(0,255,0),5)
             # print("MRT didn't enter the station yet!")
-            if count > 10:
-                time.sleep(15)
+
+        else:
+            if count > 5:
                 print("MRT leave the station")
                 count = 0
                 return True
             else:
                 count +=1
-        else:
             # print ("Not Enough match found- %d/%d" % (len(goodMatch),MIN_MATCH_COUNT))
-           print("MRT didn't leave the station yet!")
+            # print("MRT didn't leave the station yet!")
         cv2.imshow('result',frame)
         k = cv2.waitKey(30) & 0xff
         if k == 27:

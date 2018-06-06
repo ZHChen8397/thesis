@@ -1,5 +1,6 @@
 
 const moment = require('moment')
+let canPlay = false
 let programTable = {
   '星期一': [],
   '星期二': [],
@@ -49,6 +50,13 @@ module.exports.updateProgramTable = function (action, program) {
     default:
       return Promise.reject(new Error('Unexpected action'))
   }
+}
+module.exports.getCanPlay = function (){
+  return canPlay
+}
+
+module.exports.setCanPlay = function(status){
+  canPlay = status
 }
 
 module.exports.initProgramTable = function (programList) {

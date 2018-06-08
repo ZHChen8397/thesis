@@ -1,4 +1,4 @@
-Feature: MRT leave the station 
+Feature: player play or stop the advertisements after MRT depart the station over 15 seconds
 
 Scenario: There is no ad ready to play in playList and MRT depart over 15 seconds
 

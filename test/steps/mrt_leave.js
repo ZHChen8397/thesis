@@ -37,27 +37,6 @@ module.exports = (function() {
       })
     let _programTable
     let _currentProgram
-    // let programTable = {
-    //     "星期一": [],
-    //     "星期二": [],
-    //     "星期三": [],
-    //     "星期四": [],
-    //     "星期五": [
-    //       {
-    //         "userName": "Play1321",
-    //         "clip": [
-    //           {
-    //             "name": "tax",
-    //             "duration": 30
-    //           }
-    //         ],
-    //         "startTime": "06:00",
-    //         "endTime": "23:59"
-    //       }
-    //     ],
-    //     "星期六": [],
-    //     "星期日": []
-    //   }
     let isEnter
     let isEmpty = true
     var library = English.library()
@@ -78,8 +57,7 @@ module.exports = (function() {
         return s3.downloadClipFromS3(downloadList)
         })
         .then(function(){
-            app.webContents.send('playProgramRequest',{},0) 
-            app.webContents.reload()
+            app.webContents.send('playProgramRequest',undefined,0) 
         })
 
         let _programTable = utils.getProgramTable()
@@ -94,8 +72,6 @@ module.exports = (function() {
         }
     })
     .when("MRT depart the station over 15 seconds", function() {
-        // _currentProgram = utils.getCurrentProgram()
-        // app.webContents.send('playProgramRequest',_currentProgram,0) 
         return new Promise(function(resolve, reject) {
             setTimeout(function() {
                 var options = {
@@ -111,11 +87,8 @@ module.exports = (function() {
         });
     })
     .then("The player should start to play", function() {
-        utils.setCanPlay(true)
-        app.webContents.send('playProgramRequest',program,0) 
         return new Promise(function(resolve,reject){
-            // app.webContents.reload()
-            // app.webContents.send('playProgramRequest',program,0) 
+            app.webContents.send('playProgramRequest',program,0) 
             setTimeout(() => {
                 resolve()
             }, 5000);
@@ -140,8 +113,8 @@ module.exports = (function() {
         });
     })
     .when("MRT depart the station less than 15 seconds", function() {
-        _currentProgram = utils.getCurrentProgram()
-        app.webContents.send('playProgramRequest',{},0) 
+        // _currentProgram = utils.getCurrentProgram()
+        // app.webContents.send('playProgramRequest',{},0) 
         return new Promise(function(resolve, reject) {
             setTimeout(function() {
                 var options = {
@@ -157,11 +130,14 @@ module.exports = (function() {
         });
     })
     .then("The player should stay stopped",function(){
-        // app.webContents.reload()
-        // app.webContents.send('playProgramRequest',{},0)
+        return new Promise(function(resolve,reject){
+            app.webContents.send('playProgramRequest',undefined,0) 
+            setTimeout(() => {
+                resolve()
+            }, 5000);
+        })
         return app.client.getAttribute('video','src')
         .then(result=>{ 
-            // console.log(result)
             if(result !== ''){
                 assert.fail('the player should stay stopped')
             }

@@ -134,30 +134,31 @@ function initIpcProcess () {
   electron.ipcMain.on('updateCurrentClip', function (event) {
     let currentProgram = utils.getCurrentProgram()
     if(currentProgram) {
-      updateRecordRequest(currentProgram)
-      let canplay = utils.getCanPlay()
-      if(canplay)mainWindow.webContents.send('playProgramRequest', currentProgram, clipIndex)
-      else mainWindow.webContents.send('playProgramRequest',{},0)
-      // if (currentProgram.clip.length - 1 === clipIndex) clipIndex = 0
-      // else clipIndex++
-      // currentClip = currentProgram.clip[clipIndex]
-      // switch (utils.isExtendPlayByMRT(currentProgram.clip[clipIndex].duration,startOfNotPlay)){ // 先判斷MRT延長，再判斷program延長
-      //   case true:
-      //     if(utils.isExtendPlayByProgram(currentProgram,clipIndex)){
-      //       mainWindow.webContents.send('playProgramRequest', currentProgram, clipIndex)
-      //     }else{
-      //       mainWindow.webContents.send('playProgramRequest', undefined)
-      //       io.emit('isPlaying', false)
-      //       isPlaying = false
-      //       pollNextProgram(JSON.stringify(currentProgram))
-      //     }
-      //     break;
-      //   case false:
-      //     mainWindow.webContents.send('playProgramRequest', undefined)
-      //     io.emit('isPlaying', false)
-      //     isPlaying = false
-      //     break;
-      // }
+      // updateRecordRequest(currentProgram)
+      // let canplay = utils.getCanPlay()
+      // if(canplay)mainWindow.webContents.send('playProgramRequest', currentProgram, clipIndex)
+      // else mainWindow.webContents.send('playProgramRequest',{},0)
+
+      if (currentProgram.clip.length - 1 === clipIndex) clipIndex = 0
+      else clipIndex++
+      currentClip = currentProgram.clip[clipIndex]
+      switch (utils.isExtendPlayByMRT(currentProgram.clip[clipIndex].duration,startOfNotPlay)){ // 先判斷MRT延長，再判斷program延長
+        case true:
+          if(utils.isExtendPlayByProgram(currentProgram,clipIndex)){
+            mainWindow.webContents.send('playProgramRequest', currentProgram, clipIndex)
+          }else{
+            mainWindow.webContents.send('playProgramRequest', undefined)
+            io.emit('isPlaying', false)
+            isPlaying = false
+            pollNextProgram(JSON.stringify(currentProgram))
+          }
+          break;
+        case false:
+          mainWindow.webContents.send('playProgramRequest', undefined)
+          io.emit('isPlaying', false)
+          isPlaying = false
+          break;
+      }
       io.emit('updateCurrentClip')
     }else {
       mainWindow.webContents.send('playProgramRequest', undefined)
@@ -187,33 +188,38 @@ if (process.env.NODE_ENV !== 'test') {
 let isPlaying
 
 function initSocketChannel () {
-  let canplay = utils.getCanPlay()
-  playController(canplay)
-  // console.log(`initSocketChannel`)
-  // clientSocket = require('socket.io-client').connect(MRTDETECTOR_DOMAIN)
+  // let canplay = utils.getCanPlay()
+  // playController(canplay)
+  console.log(`initSocketChannel`)
+  clientSocket = require('socket.io-client').connect(MRTDETECTOR_DOMAIN)
 
-  // clientSocket.on('firstConnect', function (data) {
-  //   console.log(`[firstConnect] = ${JSON.stringify(data,null,2)}`)
-  //   startOfNotPlay = data.startOfNotPlay
-  //   playController(true)
-  // })
+  clientSocket.on('firstConnect', function (data) {
+    console.log(`[firstConnect] = ${JSON.stringify(data,null,2)}`)
+    startOfNotPlay = data.startOfNotPlay
+    playController(true)
+  })
 
-  // clientSocket.on('updateStatus', function (data) {
-  //   console.log(`[updateStatus] = ${data}`)
-  //   playController(true)
-  // })
+  clientSocket.on('updateStatus', function (data) {
+    console.log(`[updateStatus] = ${data}`)
+    playController(data)
+  })
   
-  // clientSocket.on('updateStartOfNotPlay', function(time){
-  //   startOfNotPlay = time
-  // })
+  clientSocket.on('updateStartOfNotPlay', function(time){
+    startOfNotPlay = time
+  })
 }
 let golbalStatus = undefined
 function playController (status) {
   golbalStatus = status
-  if(status)mainWindow.webContents.send('playProgramRequest', utils.getCurrentProgram(), clipIndex)
-  else mainWindow.webContents.send('playProgramRequest', {}, 0)
+  console.log(`status = ${status}`)
+  if(status){
+    mainWindow.webContents.send('playProgramRequest', utils.getCurrentProgram(), clipIndex)
+  }  
+  else {
+    mainWindow.webContents.send('playProgramRequest', undefined, 0)
+  }
   // console.log(JSON.stringify(utils.getCurrentProgram(),null,2))
-  io.emit('isPlaying', true)
+  // io.emit('isPlaying', true)
   isPlaying = true
   // if (status && utils.getCurrentProgram()) {
   //   s3.checkProgramCanPlay(utils.getCurrentProgram(), function (err, checkResult) {

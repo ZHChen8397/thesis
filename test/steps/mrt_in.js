@@ -23,6 +23,8 @@ let program={
     "endTime": "23:59",
     "day": "星期二"
   }
+          // app.webContents.send('playProgramRequest',program,0) 
+        // app.webContents.reload()
 module.exports = (function() {
     let app
     before(function () {
@@ -34,15 +36,10 @@ module.exports = (function() {
       })
     let _programTable
     let _currentProgram
-
     let isEnter
     let isEmpty = true
     var library = English.library()
-    
     .given("The player has opened and has ads in playList", function() {
-        utils.setCanPlay(true)
-        app.webContents.send('playProgramRequest',program,0) 
-        // app.webContents.reload()
         serverAPI.getProgramByPanelName('JEFF_MAC_player')
         .then(result=>{
             return utils.initProgramTable(result.data)
@@ -83,28 +80,21 @@ module.exports = (function() {
                     else reject(result)
                 });
             }, 100);
-            // app.webContents.reload()
-            // app.webContents.send('playProgramRequest',{},0) 
         });
     })
     .then("The player should stop playing the ads", function() {
         return new Promise(function(resolve,reject){
-            utils.setCanPlay(false)
-            app.webContents.send('playProgramRequest',{},0) 
-            app.webContents.reload()
-
+            app.webContents.send('playProgramRequest',undefined,0) 
             setTimeout(() => {
                 resolve()
             }, 5000);
         })
         return app.client.getAttribute('video','src')
-            .then(result=>{ 
-                if(result !== ''){
-                    assert.fail('the program does not stop')
-                }
-            })
-        // app.webContents.reload()
-        // app.webContents.send('playProgramRequest',{},0)
+        .then(result=>{ 
+            if(result !== ''){
+                assert.fail('the program does not stop')
+            }
+        })
     })
 
     .given("The player has opened and has no ad in playList",function(){
@@ -117,17 +107,19 @@ module.exports = (function() {
         });
     })
     .then("The player should stay stopped",function(){
-        // app.webContents.reload()
-        // app.webContents.send('playProgramRequest',{},0)
+        return new Promise(function(resolve,reject){
+            app.webContents.send('playProgramRequest',undefined,0) 
+            setTimeout(() => {
+                resolve()
+            }, 5000);
+        })
         return app.client.getAttribute('video','src')
         .then(result=>{ 
-            // console.log(result)
             if(result !== ''){
                 assert.fail('the program does not stop')
             }
         })
     })
-
     after(function () {
         if (app && app.isRunning()) {
             return app.stop()

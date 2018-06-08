@@ -9,7 +9,7 @@ flannParam=dict(algorithm=FLANN_INDEX_KDITREE,tree=5)
 searchParam = dict(checks=75)
 flann=cv2.FlannBasedMatcher(flannParam,searchParam)
 
-trainImg=cv2.imread("./image/book.jpg",cv2.COLOR_BGR2GRAY)
+trainImg=cv2.imread("./image/book.jpg")
 trainKP,trainDesc=detector.detectAndCompute(trainImg,None)
 
 
@@ -18,8 +18,8 @@ def cam():
     count = 0
     while True:
         ret, frame=cam.read()
-        frameImg=cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)
-        frameKP,frameDesc=detector.detectAndCompute(frameImg,None)
+        # frameImg=cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)
+        frameKP,frameDesc=detector.detectAndCompute(frame,None)
         matches=flann.knnMatch(frameDesc,trainDesc,k=2)
 
         goodMatch=[]
@@ -42,6 +42,7 @@ def cam():
 
         else:
             if count > 5:
+                time.sleep(15)
                 print("MRT leave the station")
                 count = 0
                 return True

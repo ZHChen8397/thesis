@@ -12,7 +12,87 @@ const serverAPI = require('../../app/back/serverAPI.js')
 const s3 = require('../../app/back/s3.js')
 const audioHandler = require('../../app/back/audioTableHandler.js')
 // const os = require('os')
-
+let programTable = {
+    "星期一": [{
+        "userName": "Play1321",
+        "clip": [
+          {
+            "name": "tax",
+            "duration": 30
+          }
+        ],
+        "startTime": "06:00",
+        "endTime": "23:59"
+      }],
+    "星期二": [{
+        "userName": "Play1321",
+        "clip": [
+          {
+            "name": "tax",
+            "duration": 30
+          }
+        ],
+        "startTime": "06:00",
+        "endTime": "23:59"
+      }],
+    "星期三": [{
+        "userName": "Play1321",
+        "clip": [
+          {
+            "name": "tax",
+            "duration": 30
+          }
+        ],
+        "startTime": "06:00",
+        "endTime": "23:59"
+      }],
+    "星期四": [{
+        "userName": "Play1321",
+        "clip": [
+          {
+            "name": "tax",
+            "duration": 30
+          }
+        ],
+        "startTime": "06:00",
+        "endTime": "23:59"
+      }],
+    "星期五": [
+      {
+        "userName": "Play1321",
+        "clip": [
+          {
+            "name": "tax",
+            "duration": 30
+          }
+        ],
+        "startTime": "06:00",
+        "endTime": "23:59"
+      }
+    ],
+    "星期六": [{
+        "userName": "Play1321",
+        "clip": [
+          {
+            "name": "tax",
+            "duration": 30
+          }
+        ],
+        "startTime": "06:00",
+        "endTime": "23:59"
+      }],
+    "星期日": [{
+        "userName": "Play1321",
+        "clip": [
+          {
+            "name": "tax",
+            "duration": 30
+          }
+        ],
+        "startTime": "06:00",
+        "endTime": "23:59"
+      }]
+  }
 
 module.exports = (function() {
     let app
@@ -35,34 +115,16 @@ module.exports = (function() {
         })
         return app.start()
       })
-    let _programTable
-    let _currentProgram
     let isEnter
     let isEmpty = true
     var library = English.library()
     .given("The player has opened and has ads in playList", function() {
-        serverAPI.getProgramByPanelName('JEFF_MAC_player')
-        .then(result=>{
-            return utils.initProgramTable(result.data)
-        })
-        .then(function () {
-        return s3.getClipInfoByProgramTable(utils.getProgramTable())
-        })
-        .then(function (clipInfoList) {
-        let downloadList =utils.filterClipInfoList(clipInfoList)
-        audioHandler.createAudioTable(downloadList)
-        return downloadList
-        })
-        .then(function (downloadList) {
-        return s3.downloadClipFromS3(downloadList)
-        })
-        .then(function(){
+        return new Promise(function(resolve,reject){
             app.webContents.send('playProgramRequest',undefined,0) 
+            resolve()
         })
-
-        let _programTable = utils.getProgramTable()
-        for(var index in _programTable) { 
-            if(_programTable[index] !== '') isEmpty = false
+        for(var index in programTable) { 
+            if(programTable[index] !== '') isEmpty = false
         }
         if(isEmpty) {
             assert.fail('programTable is empty')
@@ -110,23 +172,6 @@ module.exports = (function() {
                 if(_emptyProgramTable[index] === undefined) assert.fail('there is already a program in CMS')
             }
             resolve(true)
-        });
-    })
-    .when("MRT depart the station less than 15 seconds", function() {
-        // _currentProgram = utils.getCurrentProgram()
-        // app.webContents.send('playProgramRequest',{},0) 
-        return new Promise(function(resolve, reject) {
-            setTimeout(function() {
-                var options = {
-                    scriptPath: './pyforJS'
-                    };
-                    var pyshell = new PythonShell('detect_depart_less_than_15s.py',options);
-                    pyshell.on('message', function (result) {
-                        isEnter = result
-                        if(result) resolve(result)
-                        else reject(result)
-                    });
-            }, 100);
         });
     })
     .then("The player should stay stopped",function(){

@@ -60,6 +60,7 @@ module.exports.setCanPlay = function(status){
 }
 
 module.exports.initProgramTable = function (programList) {
+  console.log(`programList = ${programList}`)
   programTable = {
     '星期一': [],
     '星期二': [],

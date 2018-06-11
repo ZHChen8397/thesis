@@ -11,6 +11,88 @@ const path = require('path')
 const serverAPI = require('../../app/back/serverAPI.js')
 const audioHandler = require('../../app/back/audioTableHandler.js')
 const s3 = require('../../app/back/s3.js')
+let programTable = {
+        "星期一": [{
+            "userName": "Play1321",
+            "clip": [
+              {
+                "name": "tax",
+                "duration": 30
+              }
+            ],
+            "startTime": "06:00",
+            "endTime": "23:59"
+          }],
+        "星期二": [{
+            "userName": "Play1321",
+            "clip": [
+              {
+                "name": "tax",
+                "duration": 30
+              }
+            ],
+            "startTime": "06:00",
+            "endTime": "23:59"
+          }],
+        "星期三": [{
+            "userName": "Play1321",
+            "clip": [
+              {
+                "name": "tax",
+                "duration": 30
+              }
+            ],
+            "startTime": "06:00",
+            "endTime": "23:59"
+          }],
+        "星期四": [{
+            "userName": "Play1321",
+            "clip": [
+              {
+                "name": "tax",
+                "duration": 30
+              }
+            ],
+            "startTime": "06:00",
+            "endTime": "23:59"
+          }],
+        "星期五": [
+          {
+            "userName": "Play1321",
+            "clip": [
+              {
+                "name": "tax",
+                "duration": 30
+              }
+            ],
+            "startTime": "06:00",
+            "endTime": "23:59"
+          }
+        ],
+        "星期六": [{
+            "userName": "Play1321",
+            "clip": [
+              {
+                "name": "tax",
+                "duration": 30
+              }
+            ],
+            "startTime": "06:00",
+            "endTime": "23:59"
+          }],
+        "星期日": [{
+            "userName": "Play1321",
+            "clip": [
+              {
+                "name": "tax",
+                "duration": 30
+              }
+            ],
+            "startTime": "06:00",
+            "endTime": "23:59"
+          }]
+      }
+
 let program={
     "userName": "Play1321",
     "clip": [
@@ -23,8 +105,6 @@ let program={
     "endTime": "23:59",
     "day": "星期二"
   }
-          // app.webContents.send('playProgramRequest',program,0) 
-        // app.webContents.reload()
 module.exports = (function() {
     let app
     before(function () {
@@ -33,32 +113,17 @@ module.exports = (function() {
           args: [path.join(__dirname, '../..')]
         })
         return app.start()
-      })
-    let _programTable
-    let _currentProgram
+    })
     let isEnter
     let isEmpty = true
     var library = English.library()
     .given("The player has opened and has ads in playList", function() {
-        serverAPI.getProgramByPanelName('JEFF_MAC_player')
-        .then(result=>{
-            return utils.initProgramTable(result.data)
+        return new Promise(function(resolve,reject){
+            app.webContents.send('playProgramRequest',program,0) 
+            resolve()
         })
-        .then(function () {
-            return s3.getClipInfoByProgramTable(utils.getProgramTable())
-        })
-        .then(function (clipInfoList) {
-        let downloadList =utils.filterClipInfoList(clipInfoList)
-        audioHandler.createAudioTable(downloadList)
-            return downloadList
-        })
-        .then(function (downloadList) {
-            return s3.downloadClipFromS3(downloadList)
-        })
-
-        let _programTable = utils.getProgramTable()
-        for(var index in _programTable) { 
-            if(_programTable[index] !== '') isEmpty = false
+        for(var index in programTable) { 
+            if(programTable[index] !== '') isEmpty = false
         }
         if(isEmpty) {
             assert.fail('programTable is empty')

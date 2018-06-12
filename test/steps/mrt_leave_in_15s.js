@@ -6,6 +6,7 @@ var Dictionary = Yadda.Dictionary
 var assert = require('assert')
 const utils = require('../../app/back/utils.js')
 const Application = require('spectron').Application
+const launch = require('../../test_index') 
 const electronPath = require('electron')
 const path = require('path')
 const serverAPI = require('../../app/back/serverAPI.js')
@@ -107,20 +108,12 @@ let program={
   }
 
 module.exports = (function() {
-    let app
-    before(function () {
-        app = new Application({
-          path: electronPath,
-          args: [path.join(__dirname, '../..')]
-        })
-        return app.start()
-      })
     let isEnter
     let isEmpty = true
     var library = English.library()
-    .given("The player has opened and has ads in playList", function() {
+    .given("The player has opened and has advertisements in playList", function() {
         return new Promise(function(resolve,reject){
-            app.webContents.send('playProgramRequest',undefined,0) 
+          launch.app.webContents.send('playProgramRequest',undefined,0) 
             resolve()
         })
         for(var index in programTable) { 
@@ -133,7 +126,7 @@ module.exports = (function() {
             assert(true)
         }
     })
-    .given("The player has opened and has no ad in playList",function(){
+    .given("The player has opened and has no advertisement in playList",function(){
         return new Promise(function(resolve, reject) {
             let _emptyProgramTable = utils.getProgramTable()
             for(var index in _emptyProgramTable) { 
@@ -159,23 +152,17 @@ module.exports = (function() {
     })
     .then("The player should stay stopped",function(){
         return new Promise(function(resolve,reject){
-            app.webContents.send('playProgramRequest',undefined,0) 
+          launch.app.webContents.send('playProgramRequest',undefined,0) 
             setTimeout(() => {
                 resolve()
             }, 5000);
         })
         return app.client.getAttribute('video','src')
         .then(result=>{ 
-            // console.log(result)
             if(result !== ''){
                 assert.fail('the player should stay stopped')
             }
         })
-    })
-    after(function () {
-        if (app && app.isRunning()) {
-            return app.stop()
-        }
     })
     return library;
 })();

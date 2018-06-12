@@ -4,6 +4,7 @@ var Yadda = require('yadda')
 var English = Yadda.localisation.English
 var Dictionary = Yadda.Dictionary
 var assert = require('assert')
+const launch = require('../../test_index') 
 const utils = require('../../app/back/utils.js')
 const Application = require('spectron').Application
 const electronPath = require('electron')
@@ -105,21 +106,14 @@ let program={
     "endTime": "23:59",
     "day": "星期二"
   }
+
 module.exports = (function() {
-    let app
-    before(function () {
-        app = new Application({
-          path: electronPath,
-          args: [path.join(__dirname, '../..')]
-        })
-        return app.start()
-    })
     let isEnter
     let isEmpty = true
     var library = English.library()
-    .given("The player has opened and has ads in playList", function() {
+    .given("The player has opened and has advertisments in playList", function() {
         return new Promise(function(resolve,reject){
-            app.webContents.send('playProgramRequest',program,0) 
+            launch.app.webContents.send('playProgramRequest',program,0)
             resolve()
         })
         for(var index in programTable) { 
@@ -147,9 +141,9 @@ module.exports = (function() {
             }, 100);
         });
     })
-    .then("The player should stop playing the ads", function() {
+    .then("The player should stop playing the advertisments", function() {
         return new Promise(function(resolve,reject){
-            app.webContents.send('playProgramRequest',undefined,0) 
+            launch.app.webContents.send('playProgramRequest',undefined,0)
             setTimeout(() => {
                 resolve()
             }, 5000);
@@ -162,7 +156,7 @@ module.exports = (function() {
         })
     })
 
-    .given("The player has opened and has no ad in playList",function(){
+    .given("The player has opened and has no advertisment in playList",function(){
         return new Promise(function(resolve, reject) {
             let _emptyProgramTable = utils.getProgramTable()
             for(var index in _emptyProgramTable) { 
@@ -173,7 +167,7 @@ module.exports = (function() {
     })
     .then("The player should stay stopped",function(){
         return new Promise(function(resolve,reject){
-            app.webContents.send('playProgramRequest',undefined,0) 
+            launch.app.webContents.send('playProgramRequest',undefined,0) 
             setTimeout(() => {
                 resolve()
             }, 5000);
@@ -184,11 +178,6 @@ module.exports = (function() {
                 assert.fail('the program does not stop')
             }
         })
-    })
-    after(function () {
-        if (app && app.isRunning()) {
-            return app.stop()
-        }
     })
     return library;
 })();

@@ -144,8 +144,14 @@ module.exports = (function() {
                     var pyshell = new PythonShell('detect_depart_less_than_15s.py',options);
                     pyshell.on('message', function (result) {
                         isEnter = result
-                        if(result) resolve(result)
-                        else reject(result)
+                        if(result) {
+                          resolve(result)
+                          assert(true)
+                      }
+                      else {
+                          reject(result)
+                          assert.fail()
+                      }
                     });
             }, 100);
         });

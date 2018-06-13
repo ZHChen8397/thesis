@@ -135,8 +135,14 @@ module.exports = (function() {
                 var pyshell = new PythonShell('detect_arrive.py',options);
                 pyshell.on('message', function (result) {
                     isEnter = result
-                    if(result) resolve(result)
-                    else reject(result)
+                    if(result) {
+                        resolve(result)
+                        assert(true)
+                    }
+                    else {
+                        reject(result)
+                        assert.fail()
+                    }
                 });
             }, 100);
         });

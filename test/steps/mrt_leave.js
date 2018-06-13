@@ -120,12 +120,8 @@ module.exports = (function() {
         for(var index in programTable) { 
             if(programTable[index] !== '') isEmpty = false
         }
-        if(isEmpty) {
-            assert.fail('programTable is empty')
-        }
-        else {
-            assert(true)
-        }
+        if(isEmpty) assert.fail('programTable is empty')
+        else assert(true)
     })
     .when("MRT depart the station over 15 seconds", function() {
         return new Promise(function(resolve, reject) {
@@ -136,8 +132,14 @@ module.exports = (function() {
                     var pyshell = new PythonShell('detect_depart.py',options);
                     pyshell.on('message', function (result) {
                         isEnter = result
-                        if(result) resolve(result)
-                        else reject(result)
+                        if(result) {
+                            resolve(result)
+                            assert(true)
+                        }
+                        else {
+                            reject(result)
+                            assert.fail()
+                        }
                     });
             }, 100);
         });

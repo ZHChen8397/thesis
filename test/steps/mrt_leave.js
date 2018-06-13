@@ -109,79 +109,88 @@ module.exports = (function() {
         "endTime": "23:59",
         "day": "星期二"
       }
-    let isEnter
+    let isDepart
     let isEmpty = true
     var library = English.library()
     .given("The player has opened and has advertisements in playList", function() {
         return new Promise(function(resolve,reject){
             launch.app.webContents.send('playProgramRequest',undefined,0) 
-            resolve()
+            for(var index in programTable) { 
+                if(programTable[index] !== '') isEmpty = false
+            }
+            console.log(`given ${isEmpty}`)
+            if(isEmpty) {
+                reject()
+                assert.fail('programTable is empty')
+            }
+            else {
+                resolve()
+                assert(true)
+            }
         })
-        for(var index in programTable) { 
-            if(programTable[index] !== '') isEmpty = false
-        }
-        if(isEmpty) assert.fail('programTable is empty')
-        else assert(true)
+
     })
-    .when("MRT depart the station over 15 seconds", function() {
+    .when("MRT depart the station over 15 seconds", function() {      
         return new Promise(function(resolve, reject) {
             setTimeout(function() {
                 var options = {
                     scriptPath: './pyforJS'
-                    };
-                    var pyshell = new PythonShell('detect_depart.py',options);
-                    pyshell.on('message', function (result) {
-                        isEnter = result
-                        if(result) {
+                };
+                var pyshell = new PythonShell('detect_depart.py',options);
+                pyshell.on('message', function (result) {
+                    isDepart = result
+                    if(result) {
+                        setTimeout(() => {
+                            if(isEmpty){
+                                launch.app.webContents.send('playProgramRequest',undefined,0) 
+                            }
+                            else{
+                                launch.app.webContents.send('playProgramRequest',program,0)                                     
+                            }
                             resolve(result)
-                            assert(true)
-                        }
-                        else {
-                            reject(result)
-                            assert.fail()
-                        }
-                    });
+                        }, 3000);
+                        assert(true)
+                    }
+                    else {
+                        reject(result)
+                        assert.fail()
+                    }
+                });
             }, 100);
-        });
+        })
     })
     .then("The player should start to play", function() {
         return new Promise(function(resolve,reject){
-            launch.app.webContents.send('playProgramRequest',program,0) 
             setTimeout(() => {
                 resolve()
             }, 5000);
         })
-        return app.client.getAttribute('video','src')
+        return launch.app.client.getAttribute('video','src')
         .then(result=>{ 
-            console.log(result)
             if(result === ''){
                 assert.fail('the program does not start')
             }
         })
         
     })
-
     .given("The player has opened and has no advertisement in playList",function(){
         return new Promise(function(resolve,reject){
             launch.app.webContents.send('playProgramRequest',undefined,0) 
-            resolve()
-        })
-        return new Promise(function(resolve, reject) {
             let _emptyProgramTable = utils.getProgramTable()
             for(var index in _emptyProgramTable) { 
                 if(_emptyProgramTable[index] === undefined) assert.fail('there is already a program in CMS')
             }
-            resolve(true)
-        });
+            isEmpty = true
+            resolve()
+        })
     })
     .then("The player should stay stopped",function(){
         return new Promise(function(resolve,reject){
-            launch.app.webContents.send('playProgramRequest',undefined,0) 
             setTimeout(() => {
                 resolve()
             }, 5000);
         })
-        return app.client.getAttribute('video','src')
+        return launch.app.client.getAttribute('video','src')
         .then(result=>{ 
             if(result !== ''){
                 assert.fail('the player should stay stopped')

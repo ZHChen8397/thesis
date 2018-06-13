@@ -108,7 +108,7 @@ let program={
   }
 
 module.exports = (function() {
-    let isEnter
+    let isDepart
     let isEmpty = true
     var library = English.library()
     .given("The player has opened and has advertisements in playList", function() {
@@ -143,15 +143,15 @@ module.exports = (function() {
                     };
                     var pyshell = new PythonShell('detect_depart_less_than_15s.py',options);
                     pyshell.on('message', function (result) {
-                        isEnter = result
+                        isDepart = result
                         if(result) {
-                          resolve(result)
-                          assert(true)
-                      }
-                      else {
-                          reject(result)
-                          assert.fail()
-                      }
+                        resolve(result)
+                        assert(true)
+                    }
+                    else {
+                        reject(result)
+                        assert.fail()
+                    }
                     });
             }, 100);
         });

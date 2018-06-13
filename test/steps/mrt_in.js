@@ -119,12 +119,8 @@ module.exports = (function() {
         for(var index in programTable) { 
             if(programTable[index] !== '') isEmpty = false
         }
-        if(isEmpty) {
-            assert.fail('programTable is empty')
-        }
-        else {
-            assert(true)
-        }
+        if(isEmpty) assert.fail('programTable is empty')
+        else assert(true)
     })
     .when("MRT arrive the station", function() {
         return new Promise(function(resolve, reject) {
@@ -136,6 +132,7 @@ module.exports = (function() {
                 pyshell.on('message', function (result) {
                     isEnter = result
                     if(result) {
+                        launch.app.webContents.send('playProgramRequest',undefined,0)
                         resolve(result)
                         assert(true)
                     }
@@ -148,8 +145,7 @@ module.exports = (function() {
         });
     })
     .then("The player should stop playing the advertisments", function() {
-        return new Promise(function(resolve,reject){
-            launch.app.webContents.send('playProgramRequest',undefined,0)
+        return new Promise(function(resolve,reject){     
             setTimeout(() => {
                 resolve()
             }, 5000);
@@ -173,7 +169,6 @@ module.exports = (function() {
     })
     .then("The player should stay stopped",function(){
         return new Promise(function(resolve,reject){
-            launch.app.webContents.send('playProgramRequest',undefined,0) 
             setTimeout(() => {
                 resolve()
             }, 5000);

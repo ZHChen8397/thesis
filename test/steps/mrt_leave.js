@@ -148,7 +148,7 @@ module.exports = (function() {
                                 launch.app.webContents.send('playProgramRequest',program,0)                                     
                             }
                             resolve(result)
-                        }, 3000);
+                        }, 15000);
                         assert(true)
                     }
                     else {

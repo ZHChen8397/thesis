@@ -1,8 +1,9 @@
-Feature: player play or stop the advertisements after MRT depart the station over 15 seconds
+Feature:  player play the advertisements or stay stopped after MRT depart the station over 15 seconds
 
 In order to play advertisements more efficiency and economically
 As an advertiser
-I want player to play or stop the advertisements after MRT depart the station over 15 seconds according to playList
+I want player to play the advertisements or stay stopped after MRT depart the station over 15 seconds according to playlist
+
 
 Scenario: There are advertisments ready to play in playList and MRT depart over 15 seconds
 

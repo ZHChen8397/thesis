@@ -118,7 +118,6 @@ module.exports = (function() {
             for(var index in programTable) { 
                 if(programTable[index] !== '') isEmpty = false
             }
-            console.log(`given ${isEmpty}`)
             if(isEmpty) {
                 reject()
                 assert.fail('programTable is empty')

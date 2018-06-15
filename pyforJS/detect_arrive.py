@@ -3,8 +3,7 @@ import numpy as np
 MIN_MATCH_COUNT=90
 detector=cv2.xfeatures2d.SIFT_create()
 
-FLANN_INDEX_KDITREE=0
-flannParam=dict(algorithm=FLANN_INDEX_KDITREE,tree=5)
+flannParam=dict(algorithm=0,tree=5)
 searchparam = dict(checks = 75)
 flann=cv2.FlannBasedMatcher(flannParam,searchparam)
 

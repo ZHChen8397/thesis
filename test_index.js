@@ -32,18 +32,18 @@ new Yadda.FeatureFileSearch('./test/features/mrt_inFeature').each(function(file)
     });
 });
 
-new Yadda.FeatureFileSearch('./test/features/mrt_in_noProgram_Feature').each(function(file) {  
-    featureFile(file, function(feature) {        
-        var library = require('./test/steps/mrt_in.js');
-        var yadda = Yadda.createInstance(library);
+// new Yadda.FeatureFileSearch('./test/features/mrt_in_noProgram_Feature').each(function(file) {  
+//     featureFile(file, function(feature) {        
+//         var library = require('./test/steps/mrt_in.js');
+//         var yadda = Yadda.createInstance(library);
         
-        scenarios(feature.scenarios, function(scenario) {
-            steps(scenario.steps, function(step, done) {
-                yadda.run(step, done);
-            });
-        });
-    });
-});
+//         scenarios(feature.scenarios, function(scenario) {
+//             steps(scenario.steps, function(step, done) {
+//                 yadda.run(step, done);
+//             });
+//         });
+//     });
+// });
 
 // new Yadda.FeatureFileSearch('./test/features/mrt_leaveFeature').each(function(file) {
 

@@ -111,7 +111,7 @@ module.exports = (function() {
     let isEnter
     let isEmpty = true
     var library = English.library()
-    .given("The player has opened and has advertisments in playList", function() {
+    .given("The player has opened and has advertisements in playList", function() {
         return new Promise(function(resolve,reject){
             launch.app.webContents.send('playProgramRequest',program,0)
             resolve()
@@ -144,7 +144,7 @@ module.exports = (function() {
             }, 100);
         });
     })
-    .then("The player should stop playing the advertisments", function() {
+    .then("The player should stop playing the advertisements", function() {
         return new Promise(function(resolve,reject){     
             setTimeout(() => {
                 resolve()
@@ -158,7 +158,7 @@ module.exports = (function() {
         })
     })
 
-    .given("The player has opened and has no advertisment in playList",function(){
+    .given("The player has opened and has no advertisement in playList",function(){
         return new Promise(function(resolve, reject) {
             let _emptyProgramTable = utils.getProgramTable()
             for(var index in _emptyProgramTable) { 

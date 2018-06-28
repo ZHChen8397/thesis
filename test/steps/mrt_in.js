@@ -122,7 +122,7 @@ module.exports = (function() {
         if(isEmpty) assert.fail('programTable is empty')
         else assert(true)
     })
-    .when("MRT arrive the station", function() {
+    .when("Train arrive the station", function() {
         return new Promise(function(resolve, reject) {
             setTimeout(function() {
                 var options = {
@@ -144,7 +144,7 @@ module.exports = (function() {
             }, 100);
         });
     })
-    .then("The player should stop playing the advertisements", function() {
+    .then("The player should pause the advertisements", function() {
         return new Promise(function(resolve,reject){     
             setTimeout(() => {
                 resolve()
@@ -162,12 +162,12 @@ module.exports = (function() {
         return new Promise(function(resolve, reject) {
             let _emptyProgramTable = utils.getProgramTable()
             for(var index in _emptyProgramTable) { 
-                if(_emptyProgramTable[index] === undefined) assert.fail('there is already a program in CMS')
+                if(_emptyProgramTable[index].length !== 0) assert.fail('there is already a program')
             }
             resolve(true)
         });
     })
-    .then("The player should stay stopped",function(){
+    .then("The player should stay paused",function(){
         return new Promise(function(resolve,reject){
             setTimeout(() => {
                 resolve()

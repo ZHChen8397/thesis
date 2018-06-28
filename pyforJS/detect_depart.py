@@ -2,7 +2,7 @@ import cv2
 import numpy as np          
 import time                                
 
-MIN_MATCH_COUNT=90                                               
+MIN_MATCH_COUNT=77                                               
 detector=cv2.xfeatures2d.SIFT_create()                      
 
 FLANN_INDEX_KDITREE=0
@@ -10,7 +10,7 @@ flannParam=dict(algorithm=FLANN_INDEX_KDITREE,tree=5)
 searchParam = dict(checks= 75)
 flann=cv2.FlannBasedMatcher(flannParam,searchParam)                  
 
-trainImg=cv2.imread("./image/book.jpg")
+trainImg=cv2.imread("./image/mrt.png")
 trainKP,trainDesc=detector.detectAndCompute(trainImg,None)  
 
 

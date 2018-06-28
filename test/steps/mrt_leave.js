@@ -112,7 +112,7 @@ module.exports = (function() {
     let isDepart
     let isEmpty = true
     var library = English.library()
-    .given("The player has opened and has advertisements in playList", function() {
+    .given("The player has opened and has advertisements in playList and train is in station", function() {
         return new Promise(function(resolve,reject){
             launch.app.webContents.send('playProgramRequest',undefined,0) 
             for(var index in programTable) { 
@@ -129,7 +129,7 @@ module.exports = (function() {
         })
 
     })
-    .when("MRT depart the station over 15 seconds", function() {      
+    .when("Train depart the station over 15 seconds", function() {      
         return new Promise(function(resolve, reject) {
             setTimeout(function() {
                 var options = {
@@ -148,6 +148,7 @@ module.exports = (function() {
                             }
                             resolve(result)
                         }, 15000);
+                        
                         assert(true)
                     }
                     else {
@@ -172,18 +173,18 @@ module.exports = (function() {
         })
         
     })
-    .given("The player has opened and has no advertisement in playList",function(){
+    .given("The player has opened and has no advertisement in playList and train is in station",function(){
         return new Promise(function(resolve,reject){
             launch.app.webContents.send('playProgramRequest',undefined,0) 
             let _emptyProgramTable = utils.getProgramTable()
             for(var index in _emptyProgramTable) { 
-                if(_emptyProgramTable[index] === undefined) assert.fail('there is already a program in CMS')
+                if(_emptyProgramTable[index].length !=0) assert.fail('there is already a program in CMS')
             }
             isEmpty = true
             resolve()
         })
     })
-    .then("The player should stay stopped",function(){
+    .then("The player should stay paused",function(){
         return new Promise(function(resolve,reject){
             setTimeout(() => {
                 resolve()

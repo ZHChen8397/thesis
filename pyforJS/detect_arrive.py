@@ -1,6 +1,6 @@
 import cv2
 import numpy as np
-MIN_MATCH_COUNT=90
+MIN_MATCH_COUNT=77
 detector=cv2.xfeatures2d.SIFT_create()
 
 flannParam=dict(algorithm=0,tree=5)
@@ -16,7 +16,7 @@ def cam():
     count = 0
     while True:
         ret, frame=cam.read()
-        # frameImg=cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)
+        frameImg=cv2.cvtColor(frame,cv2.COLOR_BGR2GRAY)
         frameKP,frameDesc=detector.detectAndCompute(frame,None)
         matches=flann.knnMatch(frameDesc,trainDesc,k=2)
 

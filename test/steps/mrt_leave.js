@@ -109,35 +109,40 @@ module.exports = (function() {
         "endTime": "23:59",
         "day": "星期二"
       }
-    let isDepart
     let isEmpty = true
+    let scriptPath = {
+        scriptPath: './pyforJS'
+    };
     var library = English.library()
     .given("The player has opened and has advertisements in playList and train is in station", function() {
         return new Promise(function(resolve,reject){
             launch.app.webContents.send('playProgramRequest',undefined,0) 
-            for(var index in programTable) { 
-                if(programTable[index] !== '') isEmpty = false
-            }
-            if(isEmpty) {
-                reject()
-                assert.fail('programTable is empty')
-            }
-            else {
-                resolve()
-                assert(true)
-            }
+            var pyshell = new PythonShell('detect_arrive.py',scriptPath);
+            pyshell.on('message', function (result) {
+                if(result){       
+                    for(var index in programTable) { 
+                        if(programTable[index] !== '') isEmpty = false
+                    }
+                    if(isEmpty) {
+                        reject()
+                        assert.fail('programTable is empty')
+                    }
+                    else {
+                        resolve()
+                        assert(true)
+                    }
+                }
+            })
+            
         })
 
     })
-    .when("Train depart the station over 15 seconds", function() {      
+    .when("Train depart the station over $NUM seconds", function(number) {   
+        let seconds = parseInt(number*1000)   
         return new Promise(function(resolve, reject) {
             setTimeout(function() {
-                var options = {
-                    scriptPath: './pyforJS'
-                };
-                var pyshell = new PythonShell('detect_depart.py',options);
+                var pyshell = new PythonShell('detect_depart.py',scriptPath);
                 pyshell.on('message', function (result) {
-                    isDepart = result
                     if(result) {
                         setTimeout(() => {
                             if(isEmpty){
@@ -147,7 +152,7 @@ module.exports = (function() {
                                 launch.app.webContents.send('playProgramRequest',program,0)                                     
                             }
                             resolve(result)
-                        }, 15000);
+                        }, seconds);
                         
                         assert(true)
                     }
@@ -176,12 +181,18 @@ module.exports = (function() {
     .given("The player has opened and has no advertisement in playList and train is in station",function(){
         return new Promise(function(resolve,reject){
             launch.app.webContents.send('playProgramRequest',undefined,0) 
-            let _emptyProgramTable = utils.getProgramTable()
-            for(var index in _emptyProgramTable) { 
-                if(_emptyProgramTable[index].length !=0) assert.fail('there is already a program in CMS')
-            }
-            isEmpty = true
-            resolve()
+            var pyshell = new PythonShell('detect_arrive.py',scriptPath);
+            pyshell.on('message', function (result) {
+                if(result){
+                    let _emptyProgramTable = utils.getProgramTable()
+                    for(var index in _emptyProgramTable) { 
+                        if(_emptyProgramTable[index].length !=0) assert.fail('there is already a program in CMS')
+                    }
+                    isEmpty = true
+                    resolve()
+                }
+            })
+            
         })
     })
     .then("The player should stay paused",function(){
